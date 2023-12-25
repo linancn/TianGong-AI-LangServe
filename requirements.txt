@@ -1,10 +1,11 @@
 arxiv
 duckduckgo-search
 e2b
-fastapi[]
+fastapi
 langserve[server]
 openai
 pinecone-client
+pydantic==1.10.13
 python-dotenv
 tenacity
 xata
