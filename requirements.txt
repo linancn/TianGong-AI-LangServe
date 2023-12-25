@@ -1,0 +1,10 @@
+arxiv
+duckduckgo-search
+e2b
+fastapi[]
+langserve[server]
+openai
+pinecone-client
+python-dotenv
+tenacity
+xata
