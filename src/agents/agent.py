@@ -1,3 +1,7 @@
+import os
+from functools import partial
+
+from dotenv import load_dotenv
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad.openai_tools import (
     format_to_openai_tool_messages,
@@ -8,11 +12,23 @@ from langchain.memory import XataChatMessageHistory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.tools import DuckDuckGoSearchRun
 from langchain.tools.render import format_tool_to_openai_tool
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from pydantic import BaseModel
 
-history = XataChatMessageHistory(
-    session_id="session-1", api_key=api_key, db_url=db_url, table_name="memory"
-)
+load_dotenv()
+
+xata_api_key = os.getenv("XATA_API_KEY")
+xata_db_url = os.getenv("XATA_DB_URL")
+
+
+def init_chat_history(session_id: str) -> BaseChatMessageHistory:
+    return XataChatMessageHistory(
+        session_id=session_id,
+        api_key=xata_api_key,
+        db_url=xata_db_url,
+        table_name="agent_memory",
+    )
 
 
 class InputModel(BaseModel):
@@ -50,4 +66,10 @@ def openai_agent():
 
     agent_executor = AgentExecutor(agent=agent, tools=lc_tools, verbose=True)
 
-    return agent_executor
+    agent_executor_with_history = RunnableWithMessageHistory(
+        agent_executor,  # type: ignore
+        partial(init_chat_history, "pipedrive"),
+        history_messages_key="history",
+    )
+
+    return agent_executor_with_history
