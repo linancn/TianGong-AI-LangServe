@@ -18,12 +18,12 @@ from pydantic import BaseModel
 
 load_dotenv()
 
-xata_api_key = os.getenv("XATA_API_KEY")
-xata_db_url = os.getenv("XATA_DB_URL")
-xata_table_name = os.getenv("XATA_TABLE_NAME")
-
 
 def init_chat_history(session_id: str) -> BaseChatMessageHistory:
+    xata_api_key = os.getenv("XATA_API_KEY")
+    xata_db_url = os.getenv("XATA_DB_URL")
+    xata_table_name = os.getenv("XATA_TABLE_NAME")
+
     return XataChatMessageHistory(
         session_id=session_id,
         api_key=xata_api_key,
@@ -57,6 +57,7 @@ def openai_agent():
     agent = (
         {
             "input": lambda x: x["input"],
+            "history": lambda x: x["history"],
             "agent_scratchpad": lambda x: format_to_openai_tool_messages(
                 x["intermediate_steps"]
             ),
@@ -72,7 +73,7 @@ def openai_agent():
 
     agent_executor_with_history = RunnableWithMessageHistory(
         runnable=agent_executor,
-        get_session_history=partial(init_chat_history, "pipedrive")(),
+        get_session_history=init_chat_history,
         history_messages_key="history",
     )
 

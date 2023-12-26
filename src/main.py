@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
 from langserve import add_routes
 from pydantic import BaseModel, validator
 
