@@ -4,7 +4,7 @@ from langchain.prompts import ChatPromptTemplate
 from langserve import add_routes
 from pydantic import BaseModel, validator
 
-from agents.agent import openai_agent
+from src.agents.agent import openai_agent
 
 
 class InputModel(BaseModel):

@@ -20,6 +20,7 @@ load_dotenv()
 
 xata_api_key = os.getenv("XATA_API_KEY")
 xata_db_url = os.getenv("XATA_DB_URL")
+xata_table_name = os.getenv("XATA_TABLE_NAME")
 
 
 def init_chat_history(session_id: str) -> BaseChatMessageHistory:
@@ -27,7 +28,7 @@ def init_chat_history(session_id: str) -> BaseChatMessageHistory:
         session_id=session_id,
         api_key=xata_api_key,
         db_url=xata_db_url,
-        table_name="agent_memory",
+        table_name=xata_table_name,
     )
 
 
@@ -42,7 +43,8 @@ def openai_agent():
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", "You are a helpful assistant"),
-            ("user", "{input}"),
+            MessagesPlaceholder(variable_name="history"),
+            ("human", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ]
     )
@@ -64,11 +66,13 @@ def openai_agent():
         | OpenAIToolsAgentOutputParser()
     )
 
-    agent_executor = AgentExecutor(agent=agent, tools=lc_tools, verbose=True)
+    agent_executor = AgentExecutor(
+        agent=agent, tools=lc_tools, verbose=True, tags=["pipedrive"]
+    )
 
     agent_executor_with_history = RunnableWithMessageHistory(
-        agent_executor,  # type: ignore
-        partial(init_chat_history, "pipedrive"),
+        runnable=agent_executor,
+        get_session_history=partial(init_chat_history, "pipedrive")(),
         history_messages_key="history",
     )
 
