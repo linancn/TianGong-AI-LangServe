@@ -32,6 +32,16 @@ class InputModel(BaseModel):
         return v
 
 
+class OutputModel(BaseModel):
+    output: str
+
+    @validator("output")
+    def check_input(cls, v):
+        if not isinstance(v, str):
+            raise ValueError("output must be a string")
+        return v
+
+
 app = FastAPI(
     title="TianGong AI Server",
     version="1.0",
@@ -56,6 +66,7 @@ add_routes(
     openai_agent(),
     path="/openai_agent",
     input_type=InputModel,
+    output_type=OutputModel,
 )
 
 
