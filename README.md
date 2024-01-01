@@ -26,6 +26,14 @@ pip install -r requirements.txt --upgrade
 pip freeze > requirements_freeze.txt
 ```
 
+### LCA DB Schema Generation
+
+```bash
+npm install -g @xata.io/cli@latest
+xata auth login
+xata schema dump --file src/tools/lca_data_schema/schema_origin.json
+```
+
 ### Auto Build
 
 The auto build will be triggered by pushing any tag named like release-v$version. For instance, push a tag named as v0.0.1 will build a docker image of 0.0.1 version.
