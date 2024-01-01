@@ -8,4 +8,5 @@ pinecone-client
 pydantic==1.10.13
 python-dotenv
 tenacity
+tiktoken
 xata

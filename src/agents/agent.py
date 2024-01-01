@@ -14,6 +14,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 from src.tools.search_internet_tool import SearchInternetTool
+from src.tools.search_vectordb_tool import SearchVectordbTool
 
 load_dotenv()
 
@@ -32,7 +33,7 @@ def init_chat_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def openai_agent():
-    lc_tools = [SearchInternetTool()]
+    lc_tools = [SearchInternetTool(), SearchVectordbTool()]
     oai_tools = [format_tool_to_openai_tool(tool) for tool in lc_tools]
 
     prompt = ChatPromptTemplate.from_messages(
