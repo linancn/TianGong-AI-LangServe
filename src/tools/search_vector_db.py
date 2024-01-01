@@ -21,7 +21,7 @@ from pydantic import BaseModel
 load_dotenv()
 
 
-class SearchVectordbTool(BaseTool):
+class SearchVectorDB(BaseTool):
     name = "search_vectordb_tool"
     description = "Use original query to semantic search in academic or professional vector database."
 

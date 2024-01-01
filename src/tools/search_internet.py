@@ -10,7 +10,7 @@ from langchain.tools import BaseTool, DuckDuckGoSearchResults
 from pydantic import BaseModel
 
 
-class SearchInternetTool(BaseTool):
+class SearchInternet(BaseTool):
     name = "search_internet_tool"
     description = "Search the internet for the up-to-date information."
 

@@ -13,8 +13,9 @@ from langchain.tools.render import format_tool_to_openai_tool
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
-from src.tools.search_internet_tool import SearchInternetTool
-from src.tools.search_vectordb_tool import SearchVectordbTool
+from src.tools.search_internet import SearchInternet
+from src.tools.search_lca_db import SearchLCADB
+from src.tools.search_vector_db import SearchVectorDB
 
 load_dotenv()
 
@@ -33,7 +34,8 @@ def init_chat_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def openai_agent():
-    lc_tools = [SearchInternetTool(), SearchVectordbTool()]
+    # lc_tools = [SearchInternet(), SearchVectorDB(), SearchLCADB()]
+    lc_tools = [SearchLCADB()]
     oai_tools = [format_tool_to_openai_tool(tool) for tool in lc_tools]
 
     prompt = ChatPromptTemplate.from_messages(
@@ -52,7 +54,7 @@ def openai_agent():
 
     agent = (
         {
-            "input": lambda x: x["input"].encode("utf-8"),
+            "input": lambda x: x["input"].encode("utf-8").decode('unicode_escape'),
             "history": lambda x: x["history"],
             "agent_scratchpad": lambda x: format_to_openai_tool_messages(
                 x["intermediate_steps"]
