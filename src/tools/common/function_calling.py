@@ -4,7 +4,11 @@ from langchain_core.runnables import RunnablePassthrough
 
 
 def function_calling(
-    function_desc: str, function_para: dict, prompt: ChatPromptTemplate, model_name: str
+    function_desc: str,
+    function_para: dict,
+    prompt: ChatPromptTemplate,
+    model_name: str,
+    query: str,
 ):
     function = {
         "name": "function_calling",
@@ -16,4 +20,8 @@ def function_calling(
     )
     runnable = {"input": RunnablePassthrough()} | prompt | model
 
-    return runnable
+    response = runnable.invoke(query)
+
+    result = response["additional_kwargs"]["function_call"]["arguments"]
+
+    return result
