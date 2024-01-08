@@ -20,8 +20,10 @@ def function_calling(
     )
     runnable = {"input": RunnablePassthrough()} | prompt | model
 
+    # query = query.encode("utf-8").decode("unicode_escape")
+
     response = runnable.invoke(query)
 
-    result = response["additional_kwargs"]["function_call"]["arguments"]
+    result = response.additional_kwargs["function_call"]["arguments"]
 
     return result
