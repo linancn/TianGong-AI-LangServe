@@ -17,7 +17,7 @@ from src.tools.common.function_calling import function_calling
 load_dotenv()
 
 xata_api_key = os.getenv("XATA_API_KEY")
-xata_db_url = os.getenv("XATA_DB_URL")
+xata_db_url = os.getenv("XATA_ESG_DB_URL")
 llm_model = os.getenv("OPENAI_MODEL")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 langchain_verbose = os.getenv("LANGCHAIN_VERBOSE", "False") == "True"
@@ -97,7 +97,8 @@ class SearchESG(BaseTool):
                     },
                 },
             )
-            filters["reportId"] = [item["id"] for item in search_reportid["records"]]
+            report_ids = [item["id"] for item in search_reportid["records"]]
+            filters = {"reportId": {"$any": report_ids}}
 
         response = client.embeddings.create(input=query, model="text-embedding-ada-002")
         vector = response.data[0].embedding
@@ -111,16 +112,17 @@ class SearchESG(BaseTool):
                 "filter": filters,
             },
         )
-        return result
 
-    def _arun(
+        result_list = [item["text"] for item in result["records"]]
+
+        return result_list
+
+    async def _arun(
         self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
     ) -> str:
         """Use the tool asynchronously."""
 
-        function_desc = (
-            "Generate the query and filters for a Xata database semantic search"
-        )
+        function_desc = "Generate the query and filters for a semantic search"
         function_para = {
             "type": "object",
             "properties": {
@@ -162,10 +164,11 @@ class SearchESG(BaseTool):
             function_desc, function_para, prompt, model_name, query
         )
 
+        query_response = json.loads(query_response)
         query = query_response.get("query")
 
         try:
-            corporate = json.loads(query_response.get("corporate", None))
+            corporate = query_response.get("corporate", None)
         except TypeError:
             corporate = None
 
@@ -181,7 +184,8 @@ class SearchESG(BaseTool):
                     },
                 },
             )
-            filters["reportId"] = [item["id"] for item in search_reportid["records"]]
+            report_ids = [item["id"] for item in search_reportid["records"]]
+            filters = {"reportId": {"$any": report_ids}}
 
         response = client.embeddings.create(input=query, model="text-embedding-ada-002")
         vector = response.data[0].embedding
@@ -195,4 +199,7 @@ class SearchESG(BaseTool):
                 "filter": filters,
             },
         )
-        return result
+
+        result_list = [item["text"] for item in result["records"]]
+
+        return result_list
