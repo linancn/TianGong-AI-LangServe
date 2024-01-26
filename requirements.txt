@@ -2,6 +2,7 @@ arxiv
 duckduckgo-search
 e2b
 fastapi
+langchain-openai
 langserve[server]
 openai
 pinecone-client
