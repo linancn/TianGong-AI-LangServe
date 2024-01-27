@@ -25,7 +25,7 @@ class SearchVectorDB(BaseTool):
     description = "Use original query to semantic search in academic or professional vector database."
 
     llm_model = os.getenv("OPENAI_MODEL")
-    embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL")
+    embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL_v3")
     openai_api_key = os.getenv("OPENAI_API_KEY")
     langchain_verbose = os.getenv("LANGCHAIN_VERBOSE", "False") == "True"
     pinecone_api_key = os.getenv("PINECONE_SERVERLESS_API_KEY")
@@ -173,6 +173,7 @@ class SearchVectorDB(BaseTool):
 
         return query_func_calling_chain
 
+
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
@@ -229,7 +230,7 @@ class SearchVectorDB(BaseTool):
         record = self.xata.data().query(
             "journals",
             {
-                "columns": ["doi", "title", "journal", "authors", "date"],
+                "columns": ["doi", "title", "authors"],
                 "filter": {
                     "doi": {"$any": list(doi_set)},
                 },
@@ -238,7 +239,6 @@ class SearchVectorDB(BaseTool):
 
         docs_list = []
         for doc in docs:
-            
             date = datetime.datetime.fromtimestamp(doc.metadata["created_at"])
             formatted_date = date.strftime("%Y-%m")  # Format date as 'YYYY-MM'
             source_entry = "[{}. {}. {}. {}.]({})".format(
