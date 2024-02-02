@@ -238,8 +238,8 @@ class SearchVectorDB(BaseTool):
         )
 
         docs_list = []
-        for doc in docs:
-            date = datetime.datetime.fromtimestamp(doc.metadata["created_at"])
+        for doc in docs["matches"]:
+            date = datetime.datetime.fromtimestamp(doc.metadata["date"])
             formatted_date = date.strftime("%Y-%m")  # Format date as 'YYYY-MM'
             source_entry = "[{}. {}. {}. {}.]({})".format(
                 doc.metadata["source_id"],
