@@ -12,7 +12,7 @@ from langchain.chains.openai_functions import create_structured_output_runnable
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
 from langchain.tools import BaseTool
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 from openai import OpenAI
 from pinecone import Pinecone
 from pydantic import BaseModel

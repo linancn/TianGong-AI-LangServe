@@ -6,17 +6,17 @@ from langchain.agents.format_scratchpad.openai_tools import (
     format_to_openai_tool_messages,
 )
 from langchain.agents.output_parsers.openai_tools import OpenAIToolsAgentOutputParser
-from langchain.chat_models import ChatOpenAI
 from langchain.memory import XataChatMessageHistory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.tools.render import format_tool_to_openai_tool
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.utils.function_calling import convert_to_openai_function
+from langchain_openai import ChatOpenAI
 
+from src.tools.search_esg import SearchESG
 from src.tools.search_internet import SearchInternet
 from src.tools.search_lca_db import SearchLCADB
 from src.tools.search_vector_db import SearchVectorDB
-from src.tools.search_esg import SearchESG
 
 load_dotenv()
 
@@ -37,7 +37,7 @@ def init_chat_history(session_id: str) -> BaseChatMessageHistory:
 def openai_agent():
     # lc_tools = [SearchInternet(), SearchVectorDB(), SearchLCADB(), SearchESG()]
     lc_tools = [SearchESG(), SearchInternet()]
-    oai_tools = [format_tool_to_openai_tool(tool) for tool in lc_tools]
+    oai_tools = [convert_to_openai_function(tool) for tool in lc_tools]
 
     prompt = ChatPromptTemplate.from_messages(
         [

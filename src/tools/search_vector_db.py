@@ -10,12 +10,12 @@ from langchain.callbacks.manager import (
     CallbackManagerForToolRun,
 )
 from langchain.chains.openai_functions import create_structured_output_chain
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
 from langchain.tools import BaseTool
-from langchain.vectorstores import Pinecone
+from langchain_community.vectorstores import Pinecone
 from pydantic import BaseModel
 
 load_dotenv()

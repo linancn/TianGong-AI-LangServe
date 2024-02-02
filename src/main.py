@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import Body, Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langserve import add_routes
 from pydantic import BaseModel, validator
 
