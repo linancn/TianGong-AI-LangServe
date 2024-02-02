@@ -13,6 +13,7 @@ from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
 from langchain.tools import BaseTool
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from openai import OpenAI
 from pinecone import Pinecone
 from pydantic import BaseModel
 from xata.client import XataClient
@@ -173,15 +174,12 @@ class SearchVectorDB(BaseTool):
 
         return query_func_calling_chain
 
-
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
         """Use the tool synchronously."""
 
-        embeddings = OpenAIEmbeddings(
-            api_key=self.openai_api_key, model=self.embedding_model
-        )
+        openai_client = OpenAI(api_key=self.openai_api_key)
         pc = Pinecone(api_key=self.pinecone_api_key)
         idx = pc.Index(self.pinecone_index)
 
@@ -204,7 +202,10 @@ class SearchVectorDB(BaseTool):
         if source:
             filters["source"] = source
 
-        query_vector = embeddings.embed_query(query)
+        response = openai_client.embeddings.create(
+            input=query, model=self.embedding_model
+        )
+        query_vector = response.data[0].embedding
 
         if filters:
             docs = idx.query(
@@ -227,7 +228,7 @@ class SearchVectorDB(BaseTool):
             doi = matche["id"].rpartition("_")[0]
             doi_set.add(doi)
 
-        record = self.xata.data().query(
+        xata_response = self.xata.data().query(
             "journals",
             {
                 "columns": ["doi", "title", "authors"],
@@ -237,18 +238,30 @@ class SearchVectorDB(BaseTool):
             },
         )
 
+        records = xata_response.get("records", [])
+        records_dict = {record["doi"]: record for record in records}
+
         docs_list = []
         for doc in docs["matches"]:
-            date = datetime.datetime.fromtimestamp(doc.metadata["date"])
-            formatted_date = date.strftime("%Y-%m")  # Format date as 'YYYY-MM'
-            source_entry = "[{}. {}. {}. {}.]({})".format(
-                doc.metadata["source_id"],
-                doc.metadata["source"],
-                doc.metadata["author"],
-                formatted_date,
-                doc.metadata["url"],
-            )
-            docs_list.append({"content": doc.page_content, "source": source_entry})
+            doi = doc["id"].rpartition("_")[0]
+            record = records_dict.get(doi, {})
+
+            if record:
+                date = datetime.datetime.fromtimestamp(doc.metadata["date"])
+                formatted_date = date.strftime("%Y-%m")
+                authors = ", ".join(record["authors"])
+                url = "https://doi.org/{}".format(doi)
+
+                source_entry = "[{}. {}. {}. {}.]({})".format(
+                    record["title"],
+                    doc.metadata["journal"],
+                    authors,
+                    formatted_date,
+                    url,
+                )
+                docs_list.append(
+                    {"content": doc.metadata["text"], "source": source_entry}
+                )
 
         return docs_list
 
@@ -257,15 +270,13 @@ class SearchVectorDB(BaseTool):
     ) -> str:
         """Use the tool asynchronously."""
 
-        embeddings = OpenAIEmbeddings(api_key=self.openai_api_key)
-        pinecone = Pinecone(api_key=os.environ.get("PINECONE_SERVERLESS_API_KEY"))
+        openai_client = OpenAI(api_key=self.openai_api_key)
+        pc = Pinecone(api_key=self.pinecone_api_key)
+        idx = pc.Index(self.pinecone_index)
 
-        vectorstore = PineconeVectorStore.from_existing_index(
-            index_name=self.pinecone_index,
-            embedding=embeddings,
+        query_response = self.vector_database_query_func_calling_chain().invoke(
+            {"input": query}
         )
-
-        query_response = self.vector_database_query_func_calling_chain().run(query)
 
         query = query_response.get("query")
 
@@ -282,22 +293,65 @@ class SearchVectorDB(BaseTool):
         if source:
             filters["source"] = source
 
+        response = openai_client.embeddings.create(
+            input=query, model=self.embedding_model
+        )
+        query_vector = response.data[0].embedding
+
         if filters:
-            docs = vectorstore.similarity_search(query, k=8, filter=filters)
+            docs = idx.query(
+                namespace="sci",
+                vector=query_vector,
+                top_k=16,
+                include_metadata=True,
+                filters=filters,
+            )
         else:
-            docs = vectorstore.similarity_search(query, k=8)
+            docs = idx.query(
+                namespace="sci",
+                vector=query_vector,
+                top_k=16,
+                include_metadata=True,
+            )
+
+        doi_set = set()
+        for matche in docs["matches"]:
+            doi = matche["id"].rpartition("_")[0]
+            doi_set.add(doi)
+
+        xata_response = self.xata.data().query(
+            "journals",
+            {
+                "columns": ["doi", "title", "authors"],
+                "filter": {
+                    "doi": {"$any": list(doi_set)},
+                },
+            },
+        )
+
+        records = xata_response.get("records", [])
+        records_dict = {record["doi"]: record for record in records}
 
         docs_list = []
-        for doc in docs:
-            date = datetime.datetime.fromtimestamp(doc.metadata["created_at"])
-            formatted_date = date.strftime("%Y-%m")  # Format date as 'YYYY-MM'
-            source_entry = "[{}. {}. {}. {}.]({})".format(
-                doc.metadata["source_id"],
-                doc.metadata["source"],
-                doc.metadata["author"],
-                formatted_date,
-                doc.metadata["url"],
-            )
-            docs_list.append({"content": doc.page_content, "source": source_entry})
+        for doc in docs["matches"]:
+            doi = doc["id"].rpartition("_")[0]
+            record = records_dict.get(doi, {})
+
+            if record:
+                date = datetime.datetime.fromtimestamp(doc.metadata["date"])
+                formatted_date = date.strftime("%Y-%m")
+                authors = ", ".join(record["authors"])
+                url = "https://doi.org/{}".format(doi)
+
+                source_entry = "[{}. {}. {}. {}.]({})".format(
+                    record["title"],
+                    doc.metadata["journal"],
+                    authors,
+                    formatted_date,
+                    url,
+                )
+                docs_list.append(
+                    {"content": doc.metadata["text"], "source": source_entry}
+                )
 
         return docs_list
