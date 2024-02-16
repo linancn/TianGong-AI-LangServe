@@ -27,6 +27,7 @@ pip freeze > requirements_freeze.txt
 ```
 
 .env file
+
 ```bash
 BEARER_TOKEN = 
 XATA_API_KEY =
