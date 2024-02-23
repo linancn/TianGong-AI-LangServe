@@ -1,13 +1,15 @@
 import os
+from typing import Dict, List, Optional
 
 from dotenv import load_dotenv
-from fastapi import Body, Depends, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from langchain_openai import ChatOpenAI
 from langserve import add_routes
 from pydantic import BaseModel, validator
 
 from src.agents.agent import openai_agent
+from src.services.search_academic_db import SearchSciDb
 
 load_dotenv()
 
@@ -42,6 +44,16 @@ class OutputModel(BaseModel):
         return v
 
 
+class DocumentQueryModel(BaseModel):
+    query: str
+    top_k: Optional[int] = 16
+
+
+class Document(BaseModel):
+    content: str
+    source: str
+
+
 app = FastAPI(
     title="TianGong AI Server",
     version="1.0",
@@ -49,8 +61,26 @@ app = FastAPI(
     dependencies=[Depends(validate_token)],
 )
 
+
+@app.post(
+    "/vector_search/",
+    response_model=List[Document],
+    response_description="List of documents matching the query",
+)
+async def vector_search(doc_query: DocumentQueryModel):
+    """
+    This endpoint allows you to perform a semantic search in an academic or professional vector database.
+    It takes a query string as input and returns a list of documents that match the query.
+
+    - **query**: The search query string
+    - **top_k**: The number of documents to return (default 16)
+    """
+    search = SearchSciDb()
+    return await search.search(query=doc_query.query, top_k=doc_query.top_k)
+
+
 model = ChatOpenAI(
-    model="gpt-4-1106-preview",
+    model=os.getenv("OPENAI_MODEL"),
     temperature=0,
     streaming=True,
 )

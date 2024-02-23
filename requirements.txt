@@ -6,7 +6,7 @@ langchain-openai
 langserve[server]
 openai
 pinecone-client
-pydantic==1.10.13
+pydantic==1.10.14
 python-dotenv
 tenacity
 tiktoken
