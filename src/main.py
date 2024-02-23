@@ -1,9 +1,10 @@
 import os
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.staticfiles import StaticFiles
 from langchain_openai import ChatOpenAI
 from langserve import add_routes
 from pydantic import BaseModel, validator
@@ -60,6 +61,8 @@ app = FastAPI(
     description="TianGong AI API Server",
     dependencies=[Depends(validate_token)],
 )
+
+app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
 
 @app.post(
