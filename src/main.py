@@ -2,15 +2,23 @@ import os
 from typing import List, Optional
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Form, HTTPException, Query, Request, status
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from langchain_openai import ChatOpenAI
 from langserve import add_routes
 from pydantic import BaseModel, validator
+from starlette.middleware.sessions import SessionMiddleware
 
+from src.services.wix_oauth import (
+    get_member_access_token,
+    wix_get_callback_url,
+    wix_get_subscription,
+)
 from src.agents.agent import openai_agent
-from src.services.search_academic_db import SearchSciDb
+from src.tools.search_academic_db import SearchSciDb
 
 load_dotenv()
 
@@ -102,6 +110,135 @@ add_routes(
     output_type=OutputModel,
 )
 
+oauth_app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+oauth_app.add_middleware(SessionMiddleware, secret_key=os.environ.get("MIDDLEWARE_SECRECT_KEY"))
+
+
+def get_oauth_params(
+    response_type: str = Query(...),
+    client_id: str = Query(...),
+    scope: str = Query(...),
+    state: str = Query(...),
+    redirect_uri: str = Query(...),
+) -> dict:
+    return {
+        "response_type": response_type,
+        "client_id": client_id,
+        "scope": scope,
+        "state": state,
+        "redirect_uri": redirect_uri,
+    }
+
+
+async def get_session_data(request: Request):
+    return request.session
+
+
+@oauth_app.get("/login/")
+async def login(
+    request: Request,
+    oauth_params: dict = Depends(get_oauth_params),
+    session_data: dict = Depends(get_session_data),
+):
+    session_data.update(oauth_params)
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@oauth_app.post("/login/")
+async def login_post(
+    username: str = Form(...),
+    password: str = Form(...),
+    session_data: dict = Depends(get_session_data),
+):
+    # response_type = session_data.get("response_type")
+    # client_id = session_data.get("client_id")
+    # scope = session_data.get("scope")
+    state = session_data.get("state")
+    # redirect_uri = session_data.get("redirect_uri")
+
+    wix_callback_url, code_verifier = await wix_get_callback_url(
+        username=username, password=password, state=state
+    )
+
+    session_data["wix_callback_url"] = wix_callback_url
+    session_data["code_verifier"] = code_verifier
+
+    # redirect to callback url
+    url = f"../callback/"
+    raise HTTPException(
+        status_code=status.HTTP_303_SEE_OTHER, headers={"Location": url}
+    )
+
+
+@oauth_app.get("/callback/")
+async def callback(request: Request, session_data: dict = Depends(get_session_data)):
+    wix_callback_url = session_data.get("wix_callback_url")
+
+    return templates.TemplateResponse(
+        "callback.html",
+        {
+            "request": request,
+            "wix_callback_url": wix_callback_url,
+        },
+    )
+
+
+class SubscriptionRequest(BaseModel):
+    code: str
+    state: str
+
+
+@oauth_app.post("/callback/")
+async def subscription(
+    request: SubscriptionRequest, session_data: dict = Depends(get_session_data)
+):
+    # response_type = session_data.get("response_type")
+    # client_id = session_data.get("client_id")
+    # scope = session_data.get("scope")
+    state = session_data.get("state")
+    redirect_uri = session_data.get("redirect_uri")
+    # state from wix
+    openai_code = os.environ.get("OPENAI_CODE")
+    url = redirect_uri + f"?state={state}&code={openai_code}"
+
+    wix_code = request.code
+
+    member_access_token, member_refresh_token = await get_member_access_token(
+        wix_code, session_data["code_verifier"]
+    )
+
+    subscription = await wix_get_subscription(member_access_token)
+
+    if subscription == "Elite":
+        return JSONResponse(content={"message": "You are an Elite member.", "url": url})
+
+    else:
+        return JSONResponse(
+            content={
+                "message": "You are not an Elite member.",
+                "url": "https://www.kaiwu.info",
+            }
+        )
+
+
+@oauth_app.post("/authorization/")
+async def authorization(
+    client_id: str = Form(...),
+    client_secret: str = Form(...),
+    code: str = Form(...),
+):
+    if (
+        client_id != os.environ.get("CLIENT_ID")
+        or client_secret != os.environ.get("CLIENT_SECRET")
+        or code != os.environ.get("OPENAI_CODE")
+    ):
+        raise HTTPException(status_code=401, detail="Invalid or missing token")
+
+    return {"access_token": os.environ.get("BEARER_TOKEN"), "token_type": "bearer"}
+
+
+app.mount("/oauth", oauth_app)
 
 if __name__ == "__main__":
     import uvicorn

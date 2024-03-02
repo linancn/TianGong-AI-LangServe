@@ -15,4 +15,6 @@ COPY src/ src/
 
 COPY static/ static/
 
+COPY templates/ templates/
+
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80"]
