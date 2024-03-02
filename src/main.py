@@ -210,13 +210,13 @@ async def subscription(
 
     subscription = await wix_get_subscription(member_access_token)
 
-    if subscription == "Elite":
-        return JSONResponse(content={"message": "You are an Elite member.", "url": url})
+    if subscription == "Pro":
+        return JSONResponse(content={"message": "You are an Pro member.", "url": url})
 
     else:
         return JSONResponse(
             content={
-                "message": "You are not an Elite member.",
+                "message": "You are not an Pro member.",
                 "url": "https://www.kaiwu.info",
             }
         )
