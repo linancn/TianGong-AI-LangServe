@@ -5,6 +5,7 @@ RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/redis.conf /etc/redis/redis.conf
 
 WORKDIR /app
 
