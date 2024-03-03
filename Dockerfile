@@ -1,6 +1,10 @@
 FROM python:3.11-bookworm
 
-RUN apt-get update && apt-get install -y redis-server
+RUN apt-get update && apt-get install -y redis-server supervisor
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /app
 
@@ -19,4 +23,4 @@ COPY static/ static/
 
 COPY templates/ templates/
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["/usr/bin/supervisord"]
