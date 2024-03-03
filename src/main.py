@@ -236,7 +236,7 @@ async def authorization(
     client_secret: str = Form(...),
     code: str = Form(...),
 ):
-    expires_in = r.get(code)
+    expires_in = int(r.get(code))
     if (
         client_id != os.environ.get("CLIENT_ID")
         or client_secret != os.environ.get("CLIENT_SECRET")

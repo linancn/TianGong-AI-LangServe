@@ -118,7 +118,7 @@ def get_highest_active_subscription(orders):
     end_date = parser.parse(highest_order["endDate"])
     current_date = datetime.now(ZoneInfo("UTC"))
     time_difference = end_date - current_date
-    expires_in = int(time_difference.total_seconds())
+    expires_in = str(int(time_difference.total_seconds()))
 
     return highest_order["planName"], expires_in
 
