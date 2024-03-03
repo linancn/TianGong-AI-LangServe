@@ -119,7 +119,6 @@ def get_highest_active_subscription(orders):
     current_date = datetime.now(ZoneInfo("UTC"))
     time_difference = end_date - current_date
     expires_in = int(time_difference.total_seconds())
-    print(expires_in)
 
     return highest_order["planName"], expires_in
 
@@ -132,6 +131,6 @@ async def wix_get_subscription(member_access_token: str) -> str:
         )
     orders = orders_response.json()["orders"]
 
-    subscription = get_highest_active_subscription(orders)
+    subscription, expires_in = get_highest_active_subscription(orders)
 
-    return subscription
+    return subscription, expires_in

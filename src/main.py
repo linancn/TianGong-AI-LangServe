@@ -243,7 +243,7 @@ async def authorization(
         or expires_in is None
     ):
         raise HTTPException(status_code=401, detail="Invalid or missing token")
-
+    print(expires_in)
     return {
         "access_token": os.environ.get("BEARER_TOKEN"),
         "token_type": "bearer",
