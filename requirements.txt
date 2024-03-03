@@ -11,6 +11,7 @@ pinecone-client
 pydantic==1.10.14
 python-dotenv
 python-multipart
+redis
 tenacity
 tiktoken
 xata

@@ -1,6 +1,8 @@
 import os
+import uuid
 from typing import List, Optional
 
+import redis
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Form, HTTPException, Query, Request, status
 from fastapi.responses import JSONResponse
@@ -12,12 +14,12 @@ from langserve import add_routes
 from pydantic import BaseModel, validator
 from starlette.middleware.sessions import SessionMiddleware
 
+from src.agents.agent import openai_agent
 from src.services.wix_oauth import (
     get_member_access_token,
     wix_get_callback_url,
     wix_get_subscription,
 )
-from src.agents.agent import openai_agent
 from src.tools.search_academic_db import SearchSciDb
 
 load_dotenv()
@@ -25,6 +27,8 @@ load_dotenv()
 bearer_scheme = HTTPBearer()
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 assert BEARER_TOKEN is not None
+
+r = redis.Redis(host="localhost", port=6379, db=0)
 
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
@@ -112,7 +116,9 @@ add_routes(
 
 oauth_app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-oauth_app.add_middleware(SessionMiddleware, secret_key=os.environ.get("MIDDLEWARE_SECRECT_KEY"))
+oauth_app.add_middleware(
+    SessionMiddleware, secret_key=os.environ.get("MIDDLEWARE_SECRECT_KEY")
+)
 
 
 def get_oauth_params(
@@ -199,16 +205,18 @@ async def subscription(
     state = session_data.get("state")
     redirect_uri = session_data.get("redirect_uri")
     # state from wix
-    openai_code = os.environ.get("OPENAI_CODE")
+    openai_code = str(uuid.uuid4())
     url = redirect_uri + f"?state={state}&code={openai_code}"
 
     wix_code = request.code
 
-    member_access_token, member_refresh_token = await get_member_access_token(
+    member_access_token = await get_member_access_token(
         wix_code, session_data["code_verifier"]
     )
 
-    subscription = await wix_get_subscription(member_access_token)
+    subscription, expires_in = await wix_get_subscription(member_access_token)
+
+    r.set(openai_code, expires_in)
 
     if subscription == "Pro":
         return JSONResponse(content={"message": "You are an Pro member.", "url": url})
@@ -228,14 +236,19 @@ async def authorization(
     client_secret: str = Form(...),
     code: str = Form(...),
 ):
+    expires_in = r.get(code)
     if (
         client_id != os.environ.get("CLIENT_ID")
         or client_secret != os.environ.get("CLIENT_SECRET")
-        or code != os.environ.get("OPENAI_CODE")
+        or expires_in is None
     ):
         raise HTTPException(status_code=401, detail="Invalid or missing token")
 
-    return {"access_token": os.environ.get("BEARER_TOKEN"), "token_type": "bearer"}
+    return {
+        "access_token": os.environ.get("BEARER_TOKEN"),
+        "token_type": "bearer",
+        "expires_in": expires_in,
+    }
 
 
 app.mount("/oauth", oauth_app)

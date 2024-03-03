@@ -2,8 +2,11 @@ import base64
 import hashlib
 import os
 import uuid
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import httpx
+from dateutil import parser
 
 
 def generate_code_challenge(code_verifier: str) -> str:
@@ -95,9 +98,8 @@ async def get_member_access_token(code: str, code_verifier: str):
             },
         )
     member_access_token = response.json().get("access_token")
-    member_refresh_token = response.json().get("refresh_token")
 
-    return member_access_token, member_refresh_token
+    return member_access_token
 
 
 def get_highest_active_subscription(orders):
@@ -113,7 +115,13 @@ def get_highest_active_subscription(orders):
     # Get the order with the highest level
     highest_order = max(active_orders, key=lambda x: priority.get(x["planName"], 0))
 
-    return highest_order["planName"]
+    end_date = parser.parse(highest_order["endDate"])
+    current_date = datetime.now(ZoneInfo("UTC"))
+    time_difference = end_date - current_date
+    expires_in = int(time_difference.total_seconds())
+    print(expires_in)
+
+    return highest_order["planName"], expires_in
 
 
 async def wix_get_subscription(member_access_token: str) -> str:
