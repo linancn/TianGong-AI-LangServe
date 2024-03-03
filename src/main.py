@@ -199,9 +199,6 @@ class SubscriptionRequest(BaseModel):
 async def subscription(
     request: SubscriptionRequest, session_data: dict = Depends(get_session_data)
 ):
-    # response_type = session_data.get("response_type")
-    # client_id = session_data.get("client_id")
-    # scope = session_data.get("scope")
     state = session_data.get("state")
     redirect_uri = session_data.get("redirect_uri")
     # state from wix
@@ -243,7 +240,6 @@ async def authorization(
         or expires_in is None
     ):
         raise HTTPException(status_code=401, detail="Invalid or missing token")
-    print(expires_in)
     return {
         "access_token": os.environ.get("BEARER_TOKEN"),
         "token_type": "bearer",
