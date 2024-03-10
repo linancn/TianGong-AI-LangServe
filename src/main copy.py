@@ -3,6 +3,7 @@ import uuid
 from typing import List, Optional
 
 import redis
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Form, HTTPException, Query, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -13,24 +14,37 @@ from langserve import add_routes
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.config import FASTAPI_BEARER_TOKEN
+from src.services.agents.agent import openai_agent
 from src.services.wix_oauth import (
     get_member_access_token,
     wix_get_callback_url,
     wix_get_subscription,
 )
-from src.routers import search_academic_db_router
+from src.services.tools.search_academic_db import SearchSciDb
+
+load_dotenv()
 
 bearer_scheme = HTTPBearer()
+BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
+assert BEARER_TOKEN is not None
+
+r = redis.Redis(host="localhost", port=6379, db=0)
 
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
-    if credentials.scheme != "Bearer" or credentials.credentials != FASTAPI_BEARER_TOKEN:
+    if credentials.scheme != "Bearer" or credentials.credentials != BEARER_TOKEN:
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return credentials
 
+class DocumentQuery(BaseModel):
+    query: str
+    top_k: Optional[int] = 16
 
-r = redis.Redis(host="localhost", port=6379, db=0)
+
+class DocumentResponse(BaseModel):
+    content: str
+    source: str
+
 
 app = FastAPI(
     title="TianGong AI Server",
@@ -41,42 +55,41 @@ app = FastAPI(
 
 app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
-app.include_router(search_academic_db_router.router)
 
-# @app.post(
-#     "/vector_search/",
-#     response_model=List[DocumentResponse],
-#     response_description="List of documents matching the query",
-# )
-# async def vector_search(doc_query: DocumentQuery):
-#     """
-#     This endpoint allows you to perform a semantic search in an academic or professional vector database.
-#     It takes a query string as input and returns a list of documents that match the query.
+@app.post(
+    "/vector_search/",
+    response_model=List[DocumentResponse],
+    response_description="List of documents matching the query",
+)
+async def vector_search(doc_query: DocumentQuery):
+    """
+    This endpoint allows you to perform a semantic search in an academic or professional vector database.
+    It takes a query string as input and returns a list of documents that match the query.
 
-#     - **query**: The search query string
-#     - **top_k**: The number of documents to return (default 16)
-#     """
-#     search = SearchSciDb()
-#     return await search.search(query=doc_query.query, top_k=doc_query.top_k)
+    - **query**: The search query string
+    - **top_k**: The number of documents to return (default 16)
+    """
+    search = SearchSciDb()
+    return await search.search(query=doc_query.query, top_k=doc_query.top_k)
 
 
-# model = ChatOpenAI(
-#     model=os.getenv("OPENAI_MODEL"),
-#     temperature=0,
-#     streaming=True,
-# )
+model = ChatOpenAI(
+    model=os.getenv("OPENAI_MODEL"),
+    temperature=0,
+    streaming=True,
+)
 
-# add_routes(
-#     app,
-#     model,
-#     path="/openai",
-# )
+add_routes(
+    app,
+    model,
+    path="/openai",
+)
 
-# add_routes(
-#     app,
-#     openai_agent(),
-#     path="/openai_agent",
-# )
+add_routes(
+    app,
+    openai_agent(),
+    path="/openai_agent",
+)
 
 oauth_app = FastAPI()
 templates = Jinja2Templates(directory="templates")
