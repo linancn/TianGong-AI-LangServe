@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config import FASTAPI_BEARER_TOKEN
-from src.services.wix_oauth import (
+from src.services.wix.wix_oauth import (
     get_member_access_token,
     wix_get_callback_url,
     wix_get_subscription,
