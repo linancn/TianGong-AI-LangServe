@@ -7,7 +7,7 @@ langchain-openai
 langserve[server]
 openai
 pinecone-client
-pydantic
+pydantic==1.10.14
 python-dotenv
 python-multipart
 redis
