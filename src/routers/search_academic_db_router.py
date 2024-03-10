@@ -1,12 +1,16 @@
 from fastapi import APIRouter, HTTPException
 
-from src.models.models import VectorSearchRequest, SearchResponse
-from src.services.tools import search_academic_db
+from src.models.models import SearchResponse, VectorSearchRequest
+from src.services.standalone import search_academic_db
 
 router = APIRouter()
 
 
-@router.post("/search_academic_db", response_model=SearchResponse)
+@router.post(
+    "/search_academic_db",
+    response_model=SearchResponse,
+    response_description="List of documents matching the query",
+)
 async def search_vectors(request: VectorSearchRequest):
     """
     This endpoint allows you to perform a semantic search in an academic or professional vector database.

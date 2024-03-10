@@ -8,24 +8,28 @@ from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from langchain_openai import ChatOpenAI
 from langserve import add_routes
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config import FASTAPI_BEARER_TOKEN
+from src.routers import search_academic_db_router
+from src.services.lc.agents.openai_agent import openai_agent_runnable
+from src.services.lc.chains.openai_chain import openai_chain_runnable
 from src.services.wix.wix_oauth import (
     get_member_access_token,
     wix_get_callback_url,
     wix_get_subscription,
 )
-from src.routers import search_academic_db_router
 
 bearer_scheme = HTTPBearer()
 
 
 def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
-    if credentials.scheme != "Bearer" or credentials.credentials != FASTAPI_BEARER_TOKEN:
+    if (
+        credentials.scheme != "Bearer"
+        or credentials.credentials != FASTAPI_BEARER_TOKEN
+    ):
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return credentials
 
@@ -36,47 +40,24 @@ app = FastAPI(
     title="TianGong AI Server",
     version="1.0",
     description="TianGong AI API Server",
-    dependencies=[Depends(validate_token)],
+    # dependencies=[Depends(validate_token)],
 )
 
 app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
 app.include_router(search_academic_db_router.router)
 
-# @app.post(
-#     "/vector_search/",
-#     response_model=List[DocumentResponse],
-#     response_description="List of documents matching the query",
-# )
-# async def vector_search(doc_query: DocumentQuery):
-#     """
-#     This endpoint allows you to perform a semantic search in an academic or professional vector database.
-#     It takes a query string as input and returns a list of documents that match the query.
 
-#     - **query**: The search query string
-#     - **top_k**: The number of documents to return (default 16)
-#     """
-#     search = SearchSciDb()
-#     return await search.search(query=doc_query.query, top_k=doc_query.top_k)
-
-
-# model = ChatOpenAI(
-#     model=os.getenv("OPENAI_MODEL"),
-#     temperature=0,
-#     streaming=True,
-# )
-
-# add_routes(
-#     app,
-#     model,
-#     path="/openai",
-# )
-
-# add_routes(
-#     app,
-#     openai_agent(),
-#     path="/openai_agent",
-# )
+add_routes(
+    app,
+    openai_chain_runnable(),
+    path="/openai_chain",
+)
+add_routes(
+    app,
+    openai_agent_runnable(),
+    path="/openai_agent",
+)
 
 oauth_app = FastAPI()
 templates = Jinja2Templates(directory="templates")

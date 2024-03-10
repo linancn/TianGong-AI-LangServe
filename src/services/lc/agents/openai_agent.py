@@ -1,6 +1,3 @@
-import os
-
-from dotenv import load_dotenv
 from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad.openai_tools import (
     format_to_openai_tool_messages,
@@ -13,30 +10,31 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.utils.function_calling import convert_to_openai_function
 from langchain_openai import ChatOpenAI
 
-from src.tools.search_esg import SearchESG
-from src.tools.search_internet import SearchInternet
-from src.tools.search_lca_db import SearchLCADB
-from src.tools.search_vector_db import SearchVectorDB
+from src.config import (
+    OPENAI_API_KEY,
+    OPENAI_MODEL,
+    XATA_API_KEY,
+    XATA_MEMORY_DB_URL,
+    XATA_MEMORY_TABLE_NAME,
+)
 
-load_dotenv()
+# from src.services.lc.tools.search_esg_tool import SearchESG
+from src.services.lc.tools.search_internet_tool import SearchInternet
 
 
 def init_chat_history(session_id: str) -> BaseChatMessageHistory:
-    xata_api_key = os.getenv("XATA_API_KEY")
-    xata_db_url = os.getenv("XATA_DB_URL")
-    xata_table_name = os.getenv("XATA_TABLE_NAME")
 
     return XataChatMessageHistory(
         session_id=session_id,
-        api_key=xata_api_key,
-        db_url=xata_db_url,
-        table_name=xata_table_name,
+        api_key=XATA_API_KEY,
+        db_url=XATA_MEMORY_DB_URL,
+        table_name=XATA_MEMORY_TABLE_NAME,
     )
 
 
-def openai_agent():
+def openai_agent_runnable():
     # lc_tools = [SearchInternet(), SearchVectorDB(), SearchLCADB(), SearchESG()]
-    lc_tools = [SearchESG(), SearchInternet()]
+    lc_tools = [SearchInternet()]
     oai_tools = [convert_to_openai_function(tool) for tool in lc_tools]
 
     prompt = ChatPromptTemplate.from_messages(
@@ -49,8 +47,9 @@ def openai_agent():
     )
 
     llm = ChatOpenAI(
+        api_key=OPENAI_API_KEY,
         temperature=0,
-        model="gpt-4-turbo-preview",
+        model=OPENAI_MODEL,
     )
 
     agent = (

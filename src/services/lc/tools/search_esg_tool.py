@@ -12,7 +12,7 @@ from langchain.tools import BaseTool
 from openai import OpenAI
 from xata.client import XataClient
 
-from src.tools.common.function_calling import function_calling
+from src.services.lc.tools.common.function_calling import function_calling
 
 load_dotenv()
 
