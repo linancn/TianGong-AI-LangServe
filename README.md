@@ -7,12 +7,12 @@
 
 [Tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial)
 
-Python 3 -> Additional Options -> 3.11-bullseye -> ZSH Plugins (Last One) -> Trust @devcontainers-contrib -> Keep Defaults
+Python 3 -> Additional Options -> 3.12-bookworm -> Trust @devcontainers-contrib -> Keep Defaults
 
 Setup `venv`:
 
 ```bash
-python3.11 -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 

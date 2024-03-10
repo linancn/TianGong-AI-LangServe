@@ -11,7 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from langchain_openai import ChatOpenAI
 from langserve import add_routes
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.agents.agent import openai_agent
@@ -36,33 +36,12 @@ def validate_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_sc
         raise HTTPException(status_code=401, detail="Invalid or missing token")
     return credentials
 
-
-class InputModel(BaseModel):
-    input: str
-
-    @validator("input")
-    def check_input(cls, v):
-        if not isinstance(v, str):
-            raise ValueError("input must be a string")
-        return v
-
-
-class OutputModel(BaseModel):
-    output: str
-
-    @validator("output")
-    def check_input(cls, v):
-        if not isinstance(v, str):
-            raise ValueError("output must be a string")
-        return v
-
-
-class DocumentQueryModel(BaseModel):
+class DocumentQuery(BaseModel):
     query: str
     top_k: Optional[int] = 16
 
 
-class Document(BaseModel):
+class DocumentResponse(BaseModel):
     content: str
     source: str
 
@@ -79,10 +58,10 @@ app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
 @app.post(
     "/vector_search/",
-    response_model=List[Document],
+    response_model=List[DocumentResponse],
     response_description="List of documents matching the query",
 )
-async def vector_search(doc_query: DocumentQueryModel):
+async def vector_search(doc_query: DocumentQuery):
     """
     This endpoint allows you to perform a semantic search in an academic or professional vector database.
     It takes a query string as input and returns a list of documents that match the query.
@@ -110,8 +89,6 @@ add_routes(
     app,
     openai_agent(),
     path="/openai_agent",
-    input_type=InputModel,
-    output_type=OutputModel,
 )
 
 oauth_app = FastAPI()
