@@ -54,7 +54,7 @@ def openai_agent_runnable():
 
     agent = (
         {
-            "input": lambda x: x["input"].encode("utf-8").decode("unicode_escape"),
+            "input": lambda x: x["input"],
             "history": lambda x: x["history"],
             "agent_scratchpad": lambda x: format_to_openai_tool_messages(
                 x["intermediate_steps"]
