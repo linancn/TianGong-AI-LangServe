@@ -10,7 +10,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.utils.function_calling import convert_to_openai_function
 from langchain_openai import ChatOpenAI
 
-from src.config import (
+from src.config.config import (
     OPENAI_API_KEY,
     OPENAI_MODEL,
     XATA_API_KEY,

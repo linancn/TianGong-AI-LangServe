@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from langserve import add_routes
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
+from src.config.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
 from src.models.models import AgentInput, AgentOutput
 from src.routers import search_academic_db_router, wix_oauth_router
 from src.services.lc.agents.openai_agent import openai_agent_runnable

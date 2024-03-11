@@ -1,6 +1,6 @@
 from langchain_openai import ChatOpenAI
 
-from src.config import OPENAI_API_KEY, OPENAI_MODEL
+from src.config.config import OPENAI_API_KEY, OPENAI_MODEL
 
 
 def openai_chain_runnable():

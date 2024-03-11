@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from src.config import CLIENT_ID, CLIENT_SECRET, FASTAPI_BEARER_TOKEN
+from src.config.config import CLIENT_ID, CLIENT_SECRET, FASTAPI_BEARER_TOKEN
 from src.services.wix.wix_oauth import (
     get_member_access_token,
     wix_get_callback_url,

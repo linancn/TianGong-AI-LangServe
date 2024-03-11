@@ -4,7 +4,7 @@ from openai import OpenAI
 from pinecone import Pinecone
 from xata.client import XataClient
 
-from src.config import (
+from src.config.config import (
     OPENAI_API_KEY,
     OPENAI_EMBEDDING_MODEL_V3,
     PINECONE_API_KEY,

@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 import httpx
 from dateutil import parser
 
-from src.config import WIX_CLIENT_ID
+from src.config.config import WIX_CLIENT_ID
 
 
 def generate_code_challenge(code_verifier: str) -> str:
