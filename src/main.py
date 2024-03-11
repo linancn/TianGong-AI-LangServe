@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config import FASTAPI_BEARER_TOKEN
+from src.models.models import AgentInput, AgentOutput
 from src.routers import search_academic_db_router
 from src.services.lc.agents.openai_agent import openai_agent_runnable
 from src.services.lc.chains.openai_chain import openai_chain_runnable
@@ -57,6 +58,8 @@ add_routes(
     app,
     openai_agent_runnable(),
     path="/openai_agent",
+    input_type=AgentInput,
+    output_type=AgentOutput,
 )
 
 oauth_app = FastAPI()

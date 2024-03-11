@@ -15,3 +15,10 @@ class SearchResultWithSource(BaseModel):
 
 class SearchResponse(BaseModel):
     result: List[SearchResultWithSource]
+
+
+class AgentInput(BaseModel):
+    input: str
+
+class AgentOutput(BaseModel):
+    output: str
