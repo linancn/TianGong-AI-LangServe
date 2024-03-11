@@ -1,12 +1,13 @@
 import base64
 import hashlib
-import os
 import uuid
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import httpx
 from dateutil import parser
+
+from src.config import WIX_CLIENT_ID
 
 
 def generate_code_challenge(code_verifier: str) -> str:
@@ -19,7 +20,6 @@ def generate_code_challenge(code_verifier: str) -> str:
 
 
 async def wix_get_callback_url(username: str, password: str, state: str):
-    WIX_CLIENT_ID = os.environ["WIX_CLIENT_ID"]
     code_verifier = str(uuid.uuid4()).replace("-", "")
 
     login_url = f"https://www.wixapis.com/_api/iam/authentication/v2/login"
@@ -85,7 +85,6 @@ async def wix_get_callback_url(username: str, password: str, state: str):
 
 
 async def get_member_access_token(code: str, code_verifier: str):
-    WIX_CLIENT_ID = os.environ["WIX_CLIENT_ID"]
     async with httpx.AsyncClient() as client:
         response = await client.post(
             "https://www.wixapis.com/oauth2/token",
