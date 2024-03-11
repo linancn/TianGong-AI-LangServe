@@ -32,7 +32,7 @@ langchain-community==0.0.27
 langchain-core==0.1.30
 langchain-openai==0.0.8
 langchain-text-splitters==0.0.1
-langserve==0.0.47
+langserve==0.0.48
 langsmith==0.1.23
 lxml==5.1.0
 MarkupSafe==2.1.5
@@ -51,7 +51,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-multipart==0.0.9
 PyYAML==6.0.1
-redis==5.0.2
+redis==5.0.3
 regex==2023.12.25
 requests==2.31.0
 six==1.16.0
