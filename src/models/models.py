@@ -22,3 +22,7 @@ class AgentInput(BaseModel):
 
 class AgentOutput(BaseModel):
     output: str
+
+class SubscriptionRequest(BaseModel):
+    code: str
+    state: str
