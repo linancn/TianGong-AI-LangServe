@@ -3,6 +3,20 @@
 
 ## Env Preparing
 
+### Using Ubuntu
+
+```bash
+
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install -y python3.12
+sudo apt install -y python3.12-dev
+sudo apt install -y python3.12-venv
+
+sudo apt upgrade
+```
+
 ### Using VSCode Dev Contariners
 
 [Tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial)
@@ -12,7 +26,7 @@ Python 3 -> Additional Options -> 3.12-bookworm -> Trust @devcontainers-contrib 
 Setup `venv`:
 
 ```bash
-python3 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 ```
 
