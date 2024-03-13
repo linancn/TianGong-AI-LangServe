@@ -23,7 +23,7 @@ xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
 
 
 async def search(query: str, top_k: int = 16) -> str:
-    """Use the search tool asynchronously."""
+    """Semantic search in academic vector database."""
 
     response = openai_client.embeddings.create(
         input=query, model=OPENAI_EMBEDDING_MODEL_V3
