@@ -17,11 +17,9 @@ from src.config.config import (
     XATA_MEMORY_DB_URL,
     XATA_MEMORY_TABLE_NAME,
 )
-
-# from src.services.lc.tools.search_esg_tool import SearchESG
+from src.services.lc.tools.search_academic_db_tool import SearchAcademicDb
 from src.services.lc.tools.search_internet_tool import SearchInternet
-# from src.services.lc.tools.search_patent_db_tool import SearchPatentDb
-# from src.services.lc.tools.search_academic_db_tool import SearchAcademicDb
+from src.services.lc.tools.search_patent_db_tool import SearchPatentDb
 
 
 def init_chat_history(session_id: str) -> BaseChatMessageHistory:
@@ -35,8 +33,7 @@ def init_chat_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def openai_agent_runnable():
-    # lc_tools = [SearchInternet(), SearchVectorDB(), SearchLCADB(), SearchESG()]
-    lc_tools = [SearchInternet()]
+    lc_tools = [SearchInternet(), SearchPatentDb(), SearchAcademicDb()]
     oai_tools = [convert_to_openai_function(tool) for tool in lc_tools]
 
     prompt = ChatPromptTemplate.from_messages(

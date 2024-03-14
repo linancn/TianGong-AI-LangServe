@@ -5,11 +5,10 @@ from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
-from langchain.pydantic_v1 import BaseModel
 from langchain.tools import BaseTool
-from langchain_core.tools import BaseTool
 from openai import OpenAI
 from pinecone import Pinecone
+from pydantic import BaseModel
 from xata.client import XataClient
 
 from src.config.config import (
@@ -21,25 +20,13 @@ from src.config.config import (
     XATA_API_KEY,
     XATA_DOCS_DB_URL,
 )
-
-
-class InputSchema(BaseModel):
-    query: str
-    top_k: Optional[int] = 16
+from src.models.models import VectorSearchRequest
 
 
 class SearchAcademicDb(BaseTool):
     name = "search_academic_db_tool"
     description = "Semantic search in academic vector database."
-
-    args_schema: Type[BaseModel] = InputSchema
-
-    openai_client = OpenAI(api_key=OPENAI_API_KEY)
-
-    pc = Pinecone(api_key=PINECONE_API_KEY)
-    idx = pc.Index(PINECONE_INDEX_NAME)
-
-    xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
+    args_schema: Type[BaseModel] = VectorSearchRequest
 
     def _run(
         self,
@@ -48,12 +35,20 @@ class SearchAcademicDb(BaseTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         """Use the tool synchronously."""
-        response = self.openai_client.embeddings.create(
+
+        openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+        pc = Pinecone(api_key=PINECONE_API_KEY)
+        idx = pc.Index(PINECONE_INDEX_NAME)
+
+        xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
+
+        response = openai_client.embeddings.create(
             input=query, model=OPENAI_EMBEDDING_MODEL_V3
         )
         query_vector = response.data[0].embedding
 
-        docs = self.idx.query(
+        docs = idx.query(
             namespace=PINECONE_NAMESPACE_SCI,
             vector=query_vector,
             top_k=top_k,
@@ -65,7 +60,7 @@ class SearchAcademicDb(BaseTool):
             doi = matche["id"].rpartition("_")[0]
             doi_set.add(doi)
 
-        xata_response = self.xata.data().query(
+        xata_response = xata.data().query(
             "journals",
             {
                 "columns": ["doi", "title", "authors"],
@@ -100,7 +95,7 @@ class SearchAcademicDb(BaseTool):
                     {"content": doc.metadata["text"], "source": source_entry}
                 )
 
-        return docs_list
+        return str(docs_list)
 
     async def _arun(
         self,
@@ -109,12 +104,20 @@ class SearchAcademicDb(BaseTool):
         run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
     ) -> str:
         """Use the tool asynchronously."""
-        response = self.openai_client.embeddings.create(
+
+        openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+        pc = Pinecone(api_key=PINECONE_API_KEY)
+        idx = pc.Index(PINECONE_INDEX_NAME)
+
+        xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
+
+        response = openai_client.embeddings.create(
             input=query, model=OPENAI_EMBEDDING_MODEL_V3
         )
         query_vector = response.data[0].embedding
 
-        docs = self.idx.query(
+        docs = idx.query(
             namespace=PINECONE_NAMESPACE_SCI,
             vector=query_vector,
             top_k=top_k,
@@ -126,7 +129,7 @@ class SearchAcademicDb(BaseTool):
             doi = matche["id"].rpartition("_")[0]
             doi_set.add(doi)
 
-        xata_response = self.xata.data().query(
+        xata_response = xata.data().query(
             "journals",
             {
                 "columns": ["doi", "title", "authors"],
@@ -161,4 +164,4 @@ class SearchAcademicDb(BaseTool):
                     {"content": doc.metadata["text"], "source": source_entry}
                 )
 
-        return docs_list
+        return str(docs_list)

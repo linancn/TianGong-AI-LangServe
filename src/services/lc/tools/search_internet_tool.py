@@ -43,7 +43,7 @@ class SearchInternet(BaseTool):
                 }
             )
 
-        return docs_list
+        return str(docs_list)
 
     async def _arun(
         self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
@@ -70,4 +70,4 @@ class SearchInternet(BaseTool):
                 }
             )
 
-        return docs_list
+        return str(docs_list)
