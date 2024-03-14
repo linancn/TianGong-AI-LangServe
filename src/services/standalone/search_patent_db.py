@@ -11,14 +11,14 @@ from src.config.config import (
     PINECONE_NAMESPACE_PATENT,
 )
 
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
-
-pc = Pinecone(api_key=PINECONE_API_KEY)
-idx = pc.Index(PINECONE_INDEX_NAME)
-
 
 async def search(query: str, top_k: int = 16) -> str:
     """Semantic search in patents vector database."""
+
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+    pc = Pinecone(api_key=PINECONE_API_KEY)
+    idx = pc.Index(PINECONE_INDEX_NAME)
 
     response = openai_client.embeddings.create(
         input=query, model=OPENAI_EMBEDDING_MODEL_V3
@@ -36,9 +36,9 @@ async def search(query: str, top_k: int = 16) -> str:
     for doc in docs["matches"]:
 
         date = datetime.datetime.fromtimestamp(doc.metadata["publication_date"])
-        formatted_date = date.strftime("%Y-%m")
+        formatted_date = date.strftime("%Y-%m-%d")
         country = doc.metadata["country"]
-        url = doc.metadata["country"]
+        url = doc.metadata["url"]
         title = doc.metadata["title"]
         id = doc["id"]
 

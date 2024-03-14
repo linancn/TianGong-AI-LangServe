@@ -14,16 +14,16 @@ from src.config.config import (
     XATA_DOCS_DB_URL,
 )
 
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
-
-pc = Pinecone(api_key=PINECONE_API_KEY)
-idx = pc.Index(PINECONE_INDEX_NAME)
-
-xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
-
 
 async def search(query: str, top_k: int = 16) -> str:
     """Semantic search in academic vector database."""
+
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+    pc = Pinecone(api_key=PINECONE_API_KEY)
+    idx = pc.Index(PINECONE_INDEX_NAME)
+
+    xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
 
     response = openai_client.embeddings.create(
         input=query, model=OPENAI_EMBEDDING_MODEL_V3
