@@ -5,19 +5,18 @@ from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
-
-from langchain_community.tools import BaseTool, DuckDuckGoSearchResults
+from langchain.tools import BaseTool
+from langchain_community.tools import DuckDuckGoSearchResults
 from pydantic import BaseModel
+
+from src.models.models import PlainSearchRequest
 
 
 class SearchInternet(BaseTool):
     name = "search_internet_tool"
     description = "Search the internet for the up-to-date information."
 
-    class InputSchema(BaseModel):
-        query: str
-
-    args_schema: Type[BaseModel] = InputSchema
+    args_schema: Type[BaseModel] = PlainSearchRequest
 
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None

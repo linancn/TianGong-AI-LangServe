@@ -5,11 +5,10 @@ from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
-from langchain.pydantic_v1 import BaseModel
 from langchain.tools import BaseTool
-from langchain_core.tools import BaseTool
 from openai import OpenAI
 from pinecone import Pinecone
+from pydantic import BaseModel
 
 from src.config.config import (
     OPENAI_API_KEY,
