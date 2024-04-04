@@ -1,5 +1,4 @@
 import json
-import os
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -12,15 +11,21 @@ from langchain.tools import BaseTool
 from openai import OpenAI
 from xata.client import XataClient
 
+from src.config.config import (
+    OPENAI_API_KEY,
+    OPENAI_EMBEDDING_MODEL_V3,
+    XATA_API_KEY,
+    XATA_ESG_DB_URL,
+)
 from src.services.lc.tools.common.function_calling import function_calling
 
 load_dotenv()
 
-xata_api_key = os.getenv("XATA_API_KEY")
-xata_db_url = os.getenv("XATA_ESG_DB_URL")
-llm_model = os.getenv("OPENAI_MODEL")
-openai_api_key = os.getenv("OPENAI_API_KEY")
-langchain_verbose = os.getenv("LANGCHAIN_VERBOSE", "False") == "True"
+xata_api_key = XATA_API_KEY
+xata_db_url = XATA_ESG_DB_URL
+llm_model = OPENAI_EMBEDDING_MODEL_V3
+openai_api_key = OPENAI_API_KEY
+#langchain_verbose = os.getenv("LANGCHAIN_VERBOSE", "False") == "True"
 xata = XataClient(api_key=xata_api_key, db_url=xata_db_url)
 
 client = OpenAI(api_key=openai_api_key)
@@ -74,7 +79,7 @@ class SearchESG(BaseTool):
         model_name = "gpt-4"
 
         query_response = function_calling(
-            function_desc, function_para, prompt, model_name, query
+            function_desc, function_para, prompt, openai_api_key, model_name, query
         )
 
         query_response = json.loads(query_response)
@@ -161,7 +166,7 @@ class SearchESG(BaseTool):
         model_name = "gpt-4"
 
         query_response = function_calling(
-            function_desc, function_para, prompt, model_name, query
+            function_desc, function_para, prompt, openai_api_key, model_name, query
         )
 
         query_response = json.loads(query_response)
