@@ -12,6 +12,10 @@ class VectorSearchRequest(BaseModel):
     top_k: Optional[int] = 16
 
 
+class VectorSearchRequestWithIds(VectorSearchRequest):
+    doc_ids: Optional[List[str]] = None
+
+
 class SearchResultWithSource(BaseModel):
     content: str
     source: str
@@ -22,7 +26,8 @@ class SearchResponse(BaseModel):
 
 
 class AgentInput(BaseModel):
-    input: str
+    system_input: str
+    human_input: str
 
 
 class AgentOutput(BaseModel):
