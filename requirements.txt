@@ -5,6 +5,7 @@ itsdangerous
 jinja2
 langchain-openai
 langserve[server]
+langsmith
 openai
 pinecone-client
 pydantic==1.10.14
