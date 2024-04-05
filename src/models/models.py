@@ -12,8 +12,8 @@ class VectorSearchRequest(BaseModel):
     top_k: Optional[int] = 16
 
 
-class VectorSearchRequestWithId(VectorSearchRequest):
-    doc_id: Optional[str] = None
+class VectorSearchRequestWithIds(VectorSearchRequest):
+    doc_ids: Optional[List[str]]= None
 
 
 class SearchResultWithSource(BaseModel):

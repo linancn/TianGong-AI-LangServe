@@ -16,19 +16,19 @@ from src.config.config import (
     PINECONE_INDEX_NAME,
     PINECONE_NAMESPACE_ESG,
 )
-from src.models.models import VectorSearchRequestWithId
+from src.models.models import VectorSearchRequestWithIds
 
 
 class SearchESG(BaseTool):
     name = "search_ESG_tool"
     description = "Search for the ESG information."
-    args_schema: Type[BaseModel] = VectorSearchRequestWithId
+    args_schema: Type[BaseModel] = VectorSearchRequestWithIds
 
     def _run(
         self,
         query: str,
         top_k: Optional[int] = 16,
-        doc_id: Optional[str] = None,
+        doc_ids: Optional[list[str]] = None,
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         """Use the tool synchronously."""
@@ -43,8 +43,8 @@ class SearchESG(BaseTool):
         query_vector = response.data[0].embedding
 
         filter = None
-        if doc_id:
-            filter = {"rec_id": {"$eq": doc_id}}
+        if doc_ids:
+            filter = {"rec_id": {"$in": doc_ids}}
 
         response = idx.query(
             namespace=PINECONE_NAMESPACE_ESG,
@@ -62,7 +62,7 @@ class SearchESG(BaseTool):
         self,
         query: str,
         top_k: Optional[int] = 16,
-        doc_id: Optional[str] = None,
+        doc_ids: Optional[list[str]] = None,
         run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
     ) -> str:
         """Use the tool asynchronously."""
@@ -77,8 +77,8 @@ class SearchESG(BaseTool):
         query_vector = response.data[0].embedding
 
         filter = None
-        if doc_id:
-            filter = {"rec_id": {"$eq": doc_id}}
+        if doc_ids:
+            filter = {"rec_id": {"$in": doc_ids}}
 
         response = idx.query(
             namespace=PINECONE_NAMESPACE_ESG,
