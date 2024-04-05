@@ -40,19 +40,10 @@ pip install -r requirements.txt --upgrade
 pip freeze > requirements_freeze.txt
 ```
 
-.env file
-
+### Using Poetry
 ```bash
-BEARER_TOKEN = 
-XATA_API_KEY =
-XATA_DB_URL =
-XATA_TABLE_NAME = #Do not create table manually, it will be created automatically
-OPENAI_API_KEY =
-OPENAI_MODEL =
-XATA_WORKSPACE_ID = #Full name of the workspace, such as "John Doe's workspace"
-PINECONE_API_KEY =
-PINECONE_ENVIRONMENT =
-PINECONE_INDEX =
+poetry shell
+poetry install --no-root
 ```
 
 ### LCA DB Schema Generation
