@@ -23,8 +23,8 @@ sudo apt upgrade
 
 Python 3 -> Additional Options -> 3.12-bookworm -> Trust @devcontainers-contrib -> Keep Defaults
 
-
 ### Using Poetry
+
 ```bash
 sudo apt update
 sudo apt install pipx
