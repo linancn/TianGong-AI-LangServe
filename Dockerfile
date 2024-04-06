@@ -1,22 +1,21 @@
 FROM python:3.12-bookworm
 
-RUN apt-get update && apt-get install -y redis-server supervisor
+RUN apt-get update && apt-get install -y redis-server supervisor pipx
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
+RUN pipx install poetry
+RUN pipx ensurepath --global
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/redis.conf /etc/redis/redis.conf
 
 WORKDIR /app
 
-# Copy the requirements.txt into the container at /app/requirements.txt
-COPY requirements.txt requirements.txt
+# Copy the pyproject.toml and poetry.lock file into the container
+COPY pyproject.toml poetry.lock ./
 
-# Upgrade pip
-RUN pip install --upgrade pip
-
-# Install pip packages
-RUN pip install -r requirements.txt
+# Install project dependencies
+RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
 
 COPY src/ src/
 
