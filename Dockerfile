@@ -3,8 +3,8 @@ FROM python:3.12-bookworm
 RUN apt-get update && apt-get install -y redis-server supervisor pipx
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
+RUN pipx ensurepath
 RUN pipx install poetry
-RUN pipx ensurepath --global
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/redis.conf /etc/redis/redis.conf
