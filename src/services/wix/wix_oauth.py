@@ -2,10 +2,10 @@ import base64
 import hashlib
 import uuid
 from datetime import datetime
-from zoneinfo import ZoneInfo
 
 import httpx
 from dateutil import parser
+from zoneinfo import ZoneInfo
 
 from src.config.config import WIX_CLIENT_ID
 
@@ -78,7 +78,7 @@ async def wix_get_callback_url(username: str, password: str, state: str):
 
         try:
             url_response = redirect_response.json()["redirectSession"]["fullUrl"]
-        except:
+        except Exception:
             return None
 
     return url_response, code_verifier

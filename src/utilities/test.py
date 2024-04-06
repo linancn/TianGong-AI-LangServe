@@ -2,23 +2,23 @@ import base64
 import datetime
 import json
 import os
-
-from dotenv import load_dotenv
-from xata.client import XataClient
 import re
 from typing import Optional, Type
-from langchain.chat_models import ChatOpenAI
+
+from dotenv import load_dotenv
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 from langchain.chains.openai_functions import create_structured_output_chain
+from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
-from openai import OpenAI
-
 from langchain.tools import BaseTool
+from openai import OpenAI
 from pydantic import BaseModel
+from xata.client import XataClient
+
 from src.tools.common.function_calling import function_calling
 
 load_dotenv()
