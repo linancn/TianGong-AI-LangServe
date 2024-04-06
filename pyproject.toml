@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "tiangong-ai-langserve"
 version = "0.1.0"
-description = ""
+description = "tiangong-ai-langserve"
 authors = ["nanli <linanenv@gmail.com>"]
 readme = "README.md"
 
