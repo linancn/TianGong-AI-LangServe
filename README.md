@@ -26,7 +26,8 @@ Python 3 -> Additional Options -> 3.12-bookworm -> Trust @devcontainers-contrib 
 
 ### Using Poetry
 ```bash
-brew install pipx
+sudo apt update
+sudo apt install pipx
 pipx ensurepath
 sudo pipx ensurepath --global
 
