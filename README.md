@@ -12,7 +12,7 @@ sudo apt install software-properties-common
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt install -y python3.12
 sudo apt install -y python3.12-dev
-sudo apt install -y python3.12-venv
+# sudo apt install -y python3.12-venv
 
 sudo apt upgrade
 ```
@@ -23,25 +23,15 @@ sudo apt upgrade
 
 Python 3 -> Additional Options -> 3.12-bookworm -> Trust @devcontainers-contrib -> Keep Defaults
 
-Setup `venv`:
-
-```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-```
-
-Install requirements:
-
-```bash
-pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install -r requirements.txt --upgrade
-
-pip freeze > requirements_freeze.txt
-```
 
 ### Using Poetry
 ```bash
+brew install pipx
+pipx ensurepath
+sudo pipx ensurepath --global
+
+pipx install poetry
+
 poetry shell
 poetry install --no-root
 ```
@@ -65,4 +55,23 @@ git tag
 git tag v0.0.1
 #push this tag to origin
 git push origin v0.0.1
+```
+
+### To Be Removed
+
+Setup `venv`:
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+```
+
+Install requirements:
+
+```bash
+pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install -r requirements.txt --upgrade
+
+pip freeze > requirements_freeze.txt
 ```

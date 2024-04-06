@@ -24,7 +24,6 @@ from src.services.lc.tools.search_patent_db_tool import SearchPatentDb
 
 
 def init_chat_history(session_id: str) -> BaseChatMessageHistory:
-
     return XataChatMessageHistory(
         session_id=session_id,
         api_key=XATA_API_KEY,

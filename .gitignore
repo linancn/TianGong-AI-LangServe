@@ -147,3 +147,5 @@ dmypy.json
 .pytype/
 
 secrets.toml
+
+.ruff_cache

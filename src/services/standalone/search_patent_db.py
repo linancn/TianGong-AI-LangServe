@@ -34,7 +34,6 @@ async def search(query: str, top_k: int = 16) -> str:
 
     docs_list = []
     for doc in docs["matches"]:
-
         date = datetime.datetime.fromtimestamp(doc.metadata["publication_date"])
         formatted_date = date.strftime("%Y-%m-%d")
         country = doc.metadata["country"]

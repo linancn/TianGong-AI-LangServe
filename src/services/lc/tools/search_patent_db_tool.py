@@ -52,7 +52,6 @@ class SearchPatentDb(BaseTool):
 
         docs_list = []
         for doc in docs["matches"]:
-
             date = datetime.datetime.fromtimestamp(doc.metadata["publication_date"])
             formatted_date = date.strftime("%Y-%m-%d")
             country = doc.metadata["country"]
@@ -100,7 +99,6 @@ class SearchPatentDb(BaseTool):
 
         docs_list = []
         for doc in docs["matches"]:
-
             date = datetime.datetime.fromtimestamp(doc.metadata["publication_date"])
             formatted_date = date.strftime("%Y-%m-%d")
             country = doc.metadata["country"]

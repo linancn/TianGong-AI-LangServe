@@ -32,7 +32,6 @@ xata = XataClient(api_key=xata_api_key, db_url=xata_db_url)
 openai_client = OpenAI()
 
 
-
 query = "苹果公司2021年的碳减排措施有哪些？"
 
 ## langchain bind function
@@ -187,8 +186,6 @@ query_response = function_calling(
 
 # query_response = esg_query_func_calling_chain().run(query)
 # query = query_response.get("query")
-
-
 
 
 ###

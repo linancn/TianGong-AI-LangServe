@@ -70,7 +70,7 @@ async def login_post(
     session_data["code_verifier"] = code_verifier
 
     # redirect to callback url
-    url = f"../callback/"
+    url = "../callback/"
     raise HTTPException(
         status_code=status.HTTP_303_SEE_OTHER, headers={"Location": url}
     )

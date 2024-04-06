@@ -22,8 +22,8 @@ def generate_code_challenge(code_verifier: str) -> str:
 async def wix_get_callback_url(username: str, password: str, state: str):
     code_verifier = str(uuid.uuid4()).replace("-", "")
 
-    login_url = f"https://www.wixapis.com/_api/iam/authentication/v2/login"
-    redirect_url = f"https://www.wixapis.com/_api/redirects-api/v1/redirect-session"
+    login_url = "https://www.wixapis.com/_api/iam/authentication/v2/login"
+    redirect_url = "https://www.wixapis.com/_api/redirects-api/v1/redirect-session"
 
     data = {"loginId": {"email": username}, "password": password}
 
