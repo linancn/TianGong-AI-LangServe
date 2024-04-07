@@ -31,6 +31,7 @@ sudo apt install pipx
 sudo pipx ensurepath
 
 pipx install poetry
+# pipx install poetry --python /usr/bin/python3.12
 
 poetry shell
 poetry install --no-root
