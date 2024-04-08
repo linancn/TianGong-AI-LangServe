@@ -9,6 +9,7 @@ from src.models.models import AgentInput, AgentOutput
 from src.routers import (
     search_academic_db_router,
     search_patent_db_router,
+    upload_file_router,
     wix_oauth_router,
 )
 from src.services.lc.agents.openai_agent import openai_agent_runnable
@@ -37,6 +38,8 @@ app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
 app.include_router(search_academic_db_router.router)
 app.include_router(search_patent_db_router.router)
+app.include_router(upload_file_router.router)
+
 
 add_routes(
     app,

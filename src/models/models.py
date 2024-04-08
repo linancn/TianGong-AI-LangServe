@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from fastapi import UploadFile
+from pydantic import BaseModel
 
 
 class PlainSearchRequest(BaseModel):
@@ -39,7 +40,5 @@ class SubscriptionRequest(BaseModel):
     state: str
 
 
-class DataAnalysisRequest(BaseModel):
-    file_name: Optional[str]
-    file_description: Optional[str]
-    file_content: str = Field(..., extra={"widget": {"type": "base64file"}})
+class FileUploadRequest(BaseModel):
+    session_id: str
