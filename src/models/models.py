@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PlainSearchRequest(BaseModel):
@@ -37,3 +37,9 @@ class AgentOutput(BaseModel):
 class SubscriptionRequest(BaseModel):
     code: str
     state: str
+
+
+class DataAnalysisRequest(BaseModel):
+    file_name: Optional[str]
+    file_description: Optional[str]
+    file_content: str = Field(..., extra={"widget": {"type": "base64file"}})
