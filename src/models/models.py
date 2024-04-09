@@ -40,5 +40,7 @@ class SubscriptionRequest(BaseModel):
     state: str
 
 
-class FileUploadRequest(BaseModel):
-    session_id: str
+class UploadFileResponse(BaseModel):
+    file_path: Optional[str]
+    session_id: Optional[str]
+    status: str
