@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from langserve import add_routes
 from starlette.middleware.sessions import SessionMiddleware
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from src.config.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
 from src.models.models import AgentInput, AgentOutput
 from src.routers import (
@@ -32,6 +34,15 @@ app = FastAPI(
     version="1.0",
     description="TianGong AI API Server",
     # dependencies=[Depends(validate_token)],
+)
+
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.mount("/.well-known", StaticFiles(directory="static"), name="static")
