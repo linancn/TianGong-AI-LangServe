@@ -45,9 +45,9 @@ def openai_agent_runnable():
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            ("system", "{system_input}"),
+            ("system", "You are helpful AI assistant."),
             MessagesPlaceholder(variable_name="history"),
-            ("human", "{human_input}"),
+            ("human", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ]
     )
@@ -60,8 +60,7 @@ def openai_agent_runnable():
 
     agent = (
         {
-            "system_input": lambda x: x["system_input"],
-            "human_input": lambda x: x["human_input"],
+            "input": lambda x: x["input"],
             "history": lambda x: x["history"],
             "agent_scratchpad": lambda x: format_to_openai_tool_messages(
                 x["intermediate_steps"]

@@ -26,8 +26,7 @@ class SearchResponse(BaseModel):
 
 
 class AgentInput(BaseModel):
-    system_input: str
-    human_input: str
+    input: str
 
 
 class AgentOutput(BaseModel):

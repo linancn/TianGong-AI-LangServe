@@ -56,11 +56,10 @@ Observation: the result of the action
 Thought: I now know the final answer
 Final Answer: the final answer to the original input question""",
             ),
-            ("system", "{system_input}"),
             MessagesPlaceholder(variable_name="history"),
             (
                 "human",
-                """Question: {human_input}
+                """Question: {input}
 Thought:{agent_scratchpad}""",
             ),
         ]
