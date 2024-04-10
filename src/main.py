@@ -1,10 +1,9 @@
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from langserve import add_routes
 from starlette.middleware.sessions import SessionMiddleware
-
-from fastapi.middleware.cors import CORSMiddleware
 
 from src.config.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
 from src.models.models import AgentInput, AgentOutput
@@ -15,7 +14,9 @@ from src.routers import (
     wix_oauth_router,
 )
 from src.services.lc.agents.openai_agent import openai_agent_runnable
+from src.services.lc.agents.zhipuai_agent import zhipuai_agent_runnable
 from src.services.lc.chains.openai_chain import openai_chain_runnable
+from src.services.lc.chains.zhipuai_chain import zhipuai_chain_runnable
 
 bearer_scheme = HTTPBearer()
 
@@ -60,8 +61,22 @@ add_routes(
 
 add_routes(
     app,
+    zhipuai_chain_runnable(),
+    path="/zhipuai_chain",
+)
+
+add_routes(
+    app,
     openai_agent_runnable(),
     path="/openai_agent",
+    input_type=AgentInput,
+    output_type=AgentOutput,
+)
+
+add_routes(
+    app,
+    zhipuai_agent_runnable(),
+    path="/zhipuai_agent",
     input_type=AgentInput,
     output_type=AgentOutput,
 )
