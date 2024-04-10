@@ -58,6 +58,13 @@ git tag v0.0.1
 git push origin v0.0.1
 ```
 
+### LangSmith
+
+```bash
+export LANGCHAIN_TRACING_V2=true
+export LANGCHAIN_API_KEY=your_api_key
+```
+
 ### To Be Removed
 
 Setup `venv`:
