@@ -1,6 +1,15 @@
 from typing import List, Optional
 
+from langchain_core.pydantic_v1 import BaseModel as LangchainBaseModel
 from pydantic import BaseModel
+
+
+class AgentInput(LangchainBaseModel):
+    input: str
+
+
+class AgentOutput(LangchainBaseModel):
+    output: str
 
 
 class PlainSearchRequest(BaseModel):
