@@ -6,7 +6,6 @@ from langserve import add_routes
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
-from src.models.models import AgentInput, AgentOutput
 from src.routers import (
     search_academic_db_router,
     search_patent_db_router,
@@ -67,18 +66,14 @@ add_routes(
 
 add_routes(
     app,
-    openai_agent_runnable(),
+    openai_agent_runnable().with_types(input_type=str, output_type=str),
     path="/openai_agent",
-    input_type=AgentInput,
-    output_type=AgentOutput,
 )
 
 add_routes(
     app,
-    zhipuai_agent_runnable(),
+    zhipuai_agent_runnable().with_types(input_type=str, output_type=str),
     path="/zhipuai_agent",
-    input_type=AgentInput,
-    output_type=AgentOutput,
 )
 
 
