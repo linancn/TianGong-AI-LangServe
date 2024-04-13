@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "LangServe",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
             "args": [
