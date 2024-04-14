@@ -65,6 +65,10 @@ export LANGCHAIN_TRACING_V2=true
 export LANGCHAIN_API_KEY=your_api_key
 ```
 
+### secrets.toml
+
+Copy secrets_dev.toml to secrets.toml and fill in the real secrets.
+
 ### To Be Removed
 
 Setup `venv`:

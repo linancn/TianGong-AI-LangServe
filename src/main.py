@@ -6,7 +6,7 @@ from langserve import add_routes
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
-from src.models.models import AgentInput, AgentOutput
+from src.models.models import AgentInput, AgentOutput, GraphInput, GraphOutput
 from src.routers import (
     search_academic_db_router,
     search_patent_db_router,
@@ -17,6 +17,7 @@ from src.services.lc.agents.openai_agent import openai_agent_runnable
 from src.services.lc.agents.zhipuai_agent import zhipuai_agent_runnable
 from src.services.lc.chains.openai_chain import openai_chain_runnable
 from src.services.lc.chains.zhipuai_chain import zhipuai_chain_runnable
+from src.services.lc.graphs.openai_gragh import openai_graph_runnable
 
 bearer_scheme = HTTPBearer()
 
@@ -81,6 +82,14 @@ add_routes(
     path="/zhipuai_agent",
     input_type=AgentInput,
     output_type=AgentOutput,
+)
+
+add_routes(
+    app,
+    openai_graph_runnable(),
+    path="/openai_graph",
+    input_type=GraphInput,
+    output_type=GraphOutput,
 )
 
 

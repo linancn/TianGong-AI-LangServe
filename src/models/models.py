@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.pydantic_v1 import BaseModel as LangchainBaseModel
 from pydantic import BaseModel
 
@@ -9,6 +10,14 @@ class AgentInput(LangchainBaseModel):
 
 
 class AgentOutput(LangchainBaseModel):
+    output: str
+
+
+class GraphInput(LangchainBaseModel):
+    messages: List[HumanMessage]
+
+
+class GraphOutput(LangchainBaseModel):
     output: str
 
 
