@@ -30,6 +30,7 @@ langchain-experimental = "^0.0.56"
 httpx-sse = "^0.4.0"
 pyjwt = "^2.8.0"
 weaviate-client = "^4.5.5"
+langgraph = "^0.0.37"
 
 [tool.poetry.group.lint.dependencies]
 ruff = "^0.3.5"
