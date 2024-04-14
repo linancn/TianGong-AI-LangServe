@@ -89,7 +89,7 @@ add_routes(
     openai_graph_runnable(),
     path="/openai_graph",
     input_type=GraphInput,
-    output_type=GraphOutput,
+    # output_type=GraphOutput,
 )
 
 
