@@ -1,6 +1,6 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import HumanMessage
 from langchain_core.pydantic_v1 import BaseModel as LangchainBaseModel
 from pydantic import BaseModel
 
@@ -15,14 +15,6 @@ class AgentOutput(LangchainBaseModel):
 
 class GraphInput(LangchainBaseModel):
     messages: List[HumanMessage]
-
-
-class Messages(LangchainBaseModel):
-    messages: List[BaseMessage]
-
-
-class GraphOutput(LangchainBaseModel):
-    __root__: Dict[str, Messages]
 
 
 class PlainSearchRequest(BaseModel):

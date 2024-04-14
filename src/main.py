@@ -6,7 +6,7 @@ from langserve import add_routes
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.config.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
-from src.models.models import AgentInput, AgentOutput, GraphInput, GraphOutput
+from src.models.models import AgentInput, AgentOutput, GraphInput
 from src.routers import (
     search_academic_db_router,
     search_patent_db_router,
@@ -89,7 +89,6 @@ add_routes(
     openai_graph_runnable(),
     path="/openai_graph",
     input_type=GraphInput,
-    output_type=GraphOutput,
 )
 
 
