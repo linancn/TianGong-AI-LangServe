@@ -11,18 +11,18 @@ COPY docker/redis.conf /etc/redis/redis.conf
 
 WORKDIR /app
 
+COPY README.md README.md
+
 # Copy the pyproject.toml and poetry.lock file into the container
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml poetry.lock poetry.toml ./
 
 # Install project dependencies
-RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction --no-root
 
 COPY src/ src/
 
 COPY static/ static/
 
 COPY templates/ templates/
-
-COPY README.md README.md
 
 CMD ["/usr/bin/supervisord"]
