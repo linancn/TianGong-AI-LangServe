@@ -148,4 +148,6 @@ dmypy.json
 
 secrets.toml
 
+.secrects/secrets.toml
+
 .ruff_cache
