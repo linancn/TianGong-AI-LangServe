@@ -23,4 +23,6 @@ COPY static/ static/
 
 COPY templates/ templates/
 
+COPY README.md README.md
+
 CMD ["/usr/bin/supervisord"]
