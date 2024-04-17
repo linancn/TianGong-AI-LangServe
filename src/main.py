@@ -5,7 +5,11 @@ from fastapi.staticfiles import StaticFiles
 from langserve import add_routes
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.config.config import FASTAPI_BEARER_TOKEN, FASTAPI_MIDDLEWARE_SECRECT_KEY
+from src.config.config import (
+    FASTAPI_AUTH,
+    FASTAPI_BEARER_TOKEN,
+    FASTAPI_MIDDLEWARE_SECRECT_KEY,
+)
 from src.models.models import AgentInput, AgentOutput, GraphInput
 from src.routers import (
     search_academic_db_router,
@@ -36,7 +40,7 @@ app = FastAPI(
     title="TianGong AI Server",
     version="1.0",
     description="TianGong AI API Server",
-    # dependencies=[Depends(validate_token)],
+    dependencies=[Depends(validate_token)] if FASTAPI_AUTH else None,
 )
 
 origins = ["*"]
