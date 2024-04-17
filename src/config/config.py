@@ -2,7 +2,7 @@ import os
 
 import toml
 
-config = toml.load(".secrects/secrets.toml")
+config = toml.load(".secrets/secrets.toml")
 
 OPENAI_API_KEY = config["OPENAI"]["API_KEY"]
 OPENAI_MODEL = config["OPENAI"]["MODEL"]
