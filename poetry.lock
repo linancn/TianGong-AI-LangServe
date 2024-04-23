@@ -457,28 +457,31 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "curl-cffi"
-version = "0.6.2"
-description = "libcurl ffi bindings for Python, with impersonation support"
+version = "0.6.3"
+description = "libcurl ffi bindings for Python, with impersonation support."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "curl_cffi-0.6.2-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:23b8a2872b160718c04b06b1f8aa4fb1a2f4f94bce7040493515e081a27cad19"},
-    {file = "curl_cffi-0.6.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:ad3c1cf5360810825ec4bc3da425f26ee4098878a615dab9d309a99afd883ba9"},
-    {file = "curl_cffi-0.6.2-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3d01de6ed737ad1924aaa0198195b9020c38e77ce90ea3d72b9eacf4938c7adf"},
-    {file = "curl_cffi-0.6.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:37e513cc149d024a2d625e202f2cc9d4423d2937343ea2e06f797d99779e62dc"},
-    {file = "curl_cffi-0.6.2-cp38-abi3-win32.whl", hash = "sha256:12e829af97cbf7c1d5afef177e786f6f404ddf163b08897a1ed087cadbeb4837"},
-    {file = "curl_cffi-0.6.2-cp38-abi3-win_amd64.whl", hash = "sha256:3791b7a9ae4cb1298165300f2dc2d60a86779f055570ae83163fc2d8a74bf714"},
-    {file = "curl_cffi-0.6.2.tar.gz", hash = "sha256:9ee519e960b5fc6e0bbf13d0ecba9ce5f6306cb929354504bf03cc30f59a8f63"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:ac60ac08f07640bd9ee6ee44310748931a3d49a7c8e878745f1817b46ff0719d"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:d78a609c3b984df9a14022c0b5fc59c1c643c39fc4cb9100e110f7551339a194"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:760b7b837c86626f2c9518c3bad42aad3b6ccb455499b648bc98e8dee9f73891"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:5423c2f53f8889bcc9ce42455fc1c0c9487b480944f66aaa6ed5ce81e0fc5540"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4b4712bc9a8a0d933aef7051eaa5448b9a1c662f25dd83967dbdd46aa3e418c0"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:5d659acbe051805b9f9c82a7725d534b5842c1a9291159e7733e7c92782ef80b"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:ea9b04df071368d13b02c51e87e3e51b46b924be61681fc280cb9633b42dac2c"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-win32.whl", hash = "sha256:0f37e3d761e37173462dbc95ae4216165dacef21f0d9ab6bb6802003516a156f"},
+    {file = "curl_cffi-0.6.3-cp38-abi3-win_amd64.whl", hash = "sha256:dd36513cd46eb8f2751d45e3aa47a989421d3f3a2bcc54abab487ae38549d91b"},
+    {file = "curl_cffi-0.6.3.tar.gz", hash = "sha256:0d2d07467590d66982f29a8dc9050b6a1f41a6c4bb44dcbf24108b13cf71a797"},
 ]
 
 [package.dependencies]
-certifi = "*"
+certifi = ">=2024.2.2"
 cffi = ">=1.12.0"
 
 [package.extras]
 build = ["cibuildwheel", "wheel"]
-dev = ["autoflake (==1.4)", "coverage (==6.4.1)", "cryptography (==38.0.3)", "flake8 (==6.0.0)", "flake8-bugbear (==22.7.1)", "flake8-pie (==0.15.0)", "httpx (==0.23.1)", "mypy (==0.971)", "nest-asyncio (==1.6.0)", "pytest (==7.1.2)", "pytest-asyncio (==0.19.0)", "pytest-trio (==0.7.0)", "ruff (==0.1.14)", "trio (==0.21.0)", "trio-typing (==0.7.0)", "trustme (==0.9.0)", "types-certifi (==2021.10.8.2)", "uvicorn (==0.18.3)", "websockets (==11.0.3)"]
-test = ["cryptography (==38.0.3)", "fastapi (==0.100.0)", "httpx (==0.23.1)", "nest-asyncio (==1.6.0)", "proxy.py (==2.4.3)", "pytest (==7.1.2)", "pytest-asyncio (==0.19.0)", "pytest-trio (==0.7.0)", "python-multipart (==0.0.6)", "trio (==0.21.0)", "trio-typing (==0.7.0)", "trustme (==0.9.0)", "types-certifi (==2021.10.8.2)", "uvicorn (==0.18.3)", "websockets (==11.0.3)"]
+dev = ["autoflake (==1.4)", "charset-normalizer (>=3.3.2,<4)", "coverage (==6.4.1)", "cryptography (==38.0.3)", "flake8 (==6.0.0)", "flake8-bugbear (==22.7.1)", "flake8-pie (==0.15.0)", "httpx (==0.23.1)", "mypy (==1.9.0)", "pytest (==7.1.2)", "pytest-asyncio (==0.19.0)", "pytest-trio (==0.7.0)", "ruff (==0.3.3)", "trio (==0.21.0)", "trio-typing (==0.7.0)", "trustme (==0.9.0)", "types-certifi (==2021.10.8.2)", "uvicorn (==0.18.3)", "websockets (==11.0.3)"]
+test = ["charset-normalizer (>=3.3.2,<4)", "cryptography (==38.0.3)", "fastapi (==0.100.0)", "httpx (==0.23.1)", "proxy.py (==2.4.3)", "pytest (==7.1.2)", "pytest-asyncio (==0.19.0)", "pytest-trio (==0.7.0)", "python-multipart (==0.0.6)", "trio (==0.21.0)", "trio-typing (==0.7.0)", "trustme (==0.9.0)", "types-certifi (==2021.10.8.2)", "uvicorn (==0.18.3)", "websockets (==11.0.3)"]
 
 [[package]]
 name = "dataclasses-json"
