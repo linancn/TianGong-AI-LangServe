@@ -21,7 +21,9 @@ async def search_vectors(request: VectorSearchRequestWithCourse):
     - **course**: The course to search in (default None)
     """
     try:
-        result = await search_education_db.search(request.query, request.top_k, request.course)
+        result = await search_education_db.search(
+            request.query, request.top_k, request.course
+        )
         return SearchResponse(result=result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
