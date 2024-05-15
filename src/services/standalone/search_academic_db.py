@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from openai import OpenAI
 from pinecone import Pinecone
@@ -15,7 +16,10 @@ from src.config.config import (
 )
 
 
-async def search(query: str, top_k: int = 16) -> str:
+async def search(
+    query: str,
+    top_k: Optional[int] = 16,
+) -> list:
     """Semantic search in academic vector database."""
 
     openai_client = OpenAI(api_key=OPENAI_API_KEY)

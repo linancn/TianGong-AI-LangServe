@@ -14,6 +14,7 @@ from src.models.models import AgentInput, AgentOutput, GraphInput
 from src.routers import (
     search_academic_db_router,
     search_education_db_router,
+    search_esg_db_router,
     search_patent_db_router,
     search_standard_db_router,
     upload_file_router,
@@ -57,6 +58,7 @@ app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
 app.include_router(search_academic_db_router.router)
 app.include_router(search_education_db_router.router)
+app.include_router(search_esg_db_router.router)
 app.include_router(search_patent_db_router.router)
 app.include_router(search_standard_db_router.router)
 app.include_router(upload_file_router.router)

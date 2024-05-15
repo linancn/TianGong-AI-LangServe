@@ -1,3 +1,5 @@
+from typing import Optional
+
 from openai import OpenAI
 from pinecone import Pinecone
 from xata.client import XataClient
@@ -13,7 +15,11 @@ from src.config.config import (
 )
 
 
-async def search(query: str, top_k: int = 16, course: str = None) -> str:
+async def search(
+    query: str,
+    top_k: Optional[int] = 16,
+    course: Optional[str] = None,
+) -> list:
     """Semantic search in education vector database."""
 
     openai_client = OpenAI(api_key=OPENAI_API_KEY)

@@ -100,7 +100,7 @@ class SearchStandardDb(BaseTool):
                     {"content": doc.metadata["text"], "source": source_entry}
                 )
 
-        return docs_list
+        return str(docs_list)
 
     async def _arun(
         self,
@@ -174,4 +174,4 @@ class SearchStandardDb(BaseTool):
                     {"content": doc.metadata["text"], "source": source_entry}
                 )
 
-        return docs_list
+        return str(docs_list)

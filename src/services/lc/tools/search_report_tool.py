@@ -56,7 +56,7 @@ class SearchReport(BaseTool):
 
         result_list = [item["metadata"]["text"] for item in response["matches"]]
 
-        return result_list
+        return str(result_list)
 
     async def _arun(
         self,
@@ -90,4 +90,4 @@ class SearchReport(BaseTool):
 
         result_list = [item["metadata"]["text"] for item in response["matches"]]
 
-        return result_list
+        return str(result_list)

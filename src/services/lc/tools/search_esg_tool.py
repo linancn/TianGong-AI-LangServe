@@ -1,3 +1,4 @@
+import datetime
 from typing import Optional, Type
 
 from langchain.callbacks.manager import (
@@ -8,6 +9,7 @@ from langchain.tools import BaseTool
 from openai import OpenAI
 from pinecone import Pinecone
 from pydantic import BaseModel
+from xata.client import XataClient
 
 from src.config.config import (
     OPENAI_API_KEY,
@@ -15,6 +17,8 @@ from src.config.config import (
     PINECONE_API_KEY,
     PINECONE_INDEX_NAME,
     PINECONE_NAMESPACE_ESG,
+    XATA_API_KEY,
+    XATA_ESG_DB_URL,
 )
 from src.models.models import VectorSearchRequestWithIds
 
@@ -37,6 +41,8 @@ class SearchESG(BaseTool):
         pc = Pinecone(api_key=PINECONE_API_KEY)
         idx = pc.Index(PINECONE_INDEX_NAME)
 
+        xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_ESG_DB_URL)
+
         response = openai_client.embeddings.create(
             input=query, model=OPENAI_EMBEDDING_MODEL_V3
         )
@@ -46,7 +52,7 @@ class SearchESG(BaseTool):
         if doc_ids:
             filter = {"rec_id": {"$in": doc_ids}}
 
-        response = idx.query(
+        docs = idx.query(
             namespace=PINECONE_NAMESPACE_ESG,
             vector=query_vector,
             filter=filter,
@@ -54,9 +60,47 @@ class SearchESG(BaseTool):
             include_metadata=True,
         )
 
-        result_list = [item["metadata"]["text"] for item in response["matches"]]
+        id_set = set()
+        for doc in docs["matches"]:
+            id = doc["metadata"]["rec_id"]
+            id_set.add(id)
 
-        return result_list
+        xata_response = xata.data().query(
+            "ESG",
+            {
+                "columns": ["company_short_name", "report_title", "publication_date"],
+                "filter": {
+                    "id": {"$any": list(id_set)},
+                },
+            },
+        )
+
+        records = xata_response.get("records", [])
+        records_dict = {record["id"]: record for record in records}
+
+        docs_list = []
+        for doc in docs["matches"]:
+            id = doc.metadata["rec_id"]
+            record = records_dict.get(id, {})
+
+            if record:
+                date = datetime.datetime.strptime(
+                    record.get("publication_date"), "%Y-%m-%dT%H:%M:%SZ"
+                )
+                formatted_date = date.strftime("%Y-%m-%d")
+                company_short_name = record.get("company_short_name", "")
+                report_title = record.get("report_title", "")
+
+                source_entry = "{}. {}. {}.".format(
+                    company_short_name,
+                    report_title,
+                    formatted_date,
+                )
+                docs_list.append(
+                    {"content": doc.metadata["text"], "source": source_entry}
+                )
+
+        return str(docs_list)
 
     async def _arun(
         self,
@@ -71,6 +115,8 @@ class SearchESG(BaseTool):
         pc = Pinecone(api_key=PINECONE_API_KEY)
         idx = pc.Index(PINECONE_INDEX_NAME)
 
+        xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_ESG_DB_URL)
+
         response = openai_client.embeddings.create(
             input=query, model=OPENAI_EMBEDDING_MODEL_V3
         )
@@ -80,7 +126,7 @@ class SearchESG(BaseTool):
         if doc_ids:
             filter = {"rec_id": {"$in": doc_ids}}
 
-        response = idx.query(
+        docs = idx.query(
             namespace=PINECONE_NAMESPACE_ESG,
             vector=query_vector,
             filter=filter,
@@ -88,6 +134,44 @@ class SearchESG(BaseTool):
             include_metadata=True,
         )
 
-        result_list = [item["metadata"]["text"] for item in response["matches"]]
+        id_set = set()
+        for doc in docs["matches"]:
+            id = doc["metadata"]["rec_id"]
+            id_set.add(id)
 
-        return result_list
+        xata_response = xata.data().query(
+            "ESG",
+            {
+                "columns": ["company_short_name", "report_title", "publication_date"],
+                "filter": {
+                    "id": {"$any": list(id_set)},
+                },
+            },
+        )
+
+        records = xata_response.get("records", [])
+        records_dict = {record["id"]: record for record in records}
+
+        docs_list = []
+        for doc in docs["matches"]:
+            id = doc.metadata["rec_id"]
+            record = records_dict.get(id, {})
+
+            if record:
+                date = datetime.datetime.strptime(
+                    record.get("publication_date"), "%Y-%m-%dT%H:%M:%SZ"
+                )
+                formatted_date = date.strftime("%Y-%m-%d")
+                company_short_name = record.get("company_short_name", "")
+                report_title = record.get("report_title", "")
+
+                source_entry = "{}. {}. {}.".format(
+                    company_short_name,
+                    report_title,
+                    formatted_date,
+                )
+                docs_list.append(
+                    {"content": doc.metadata["text"], "source": source_entry}
+                )
+
+        return str(docs_list)
