@@ -18,6 +18,7 @@ async def search_vectors(request: VectorSearchRequestWithCourse):
 
     - **query**: The search query string
     - **top_k**: The number of documents to return (default 16)
+    - **course**: The course to search in (default None)
     """
     try:
         result = await search_education_db.search(request.query, request.top_k, request.course)
