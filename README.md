@@ -69,21 +69,9 @@ export LANGCHAIN_API_KEY=your_api_key
 
 Copy secrets_dev.toml to secrets.toml and fill in the real secrets.
 
-### To Be Removed
-
-Setup `venv`:
+### Lint and Format
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-```
-
-Install requirements:
-
-```bash
-pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install -r requirements.txt --upgrade
-
-pip freeze > requirements_freeze.txt
+make lint
+make format
 ```
