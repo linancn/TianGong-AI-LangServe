@@ -30,6 +30,10 @@ class VectorSearchRequestWithIds(VectorSearchRequest):
     doc_ids: Optional[List[str]] = None
 
 
+class VectorSearchRequestWithCourse(VectorSearchRequest):
+    course: Optional[str] = None
+
+
 class SearchResultWithSource(BaseModel):
     content: str
     source: str
