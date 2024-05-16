@@ -91,10 +91,11 @@ class SearchESG(BaseTool):
                 company_short_name = record.get("company_short_name", "")
                 report_title = record.get("report_title", "")
 
-                source_entry = "{}. {}. {}.".format(
+                source_entry = "{}. {}. {}. (P{})".format(
                     company_short_name,
                     report_title,
                     formatted_date,
+                    int(doc.metadata["page_number"]),
                 )
                 docs_list.append(
                     {"content": doc.metadata["text"], "source": source_entry}
@@ -165,10 +166,11 @@ class SearchESG(BaseTool):
                 company_short_name = record.get("company_short_name", "")
                 report_title = record.get("report_title", "")
 
-                source_entry = "{}. {}. {}.".format(
+                source_entry = "{}. {}. {}. (P{})".format(
                     company_short_name,
                     report_title,
                     formatted_date,
+                    int(doc.metadata["page_number"]),
                 )
                 docs_list.append(
                     {"content": doc.metadata["text"], "source": source_entry}
