@@ -48,6 +48,10 @@ class SearchResponse(BaseModel):
     result: List[SearchResultWithSource]
 
 
+class SearchAuthorsResult(BaseModel):
+    authors: List[str]
+
+
 class SubscriptionRequest(BaseModel):
     code: str
     state: str

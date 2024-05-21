@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from src.models.models import SearchResponse, VectorListSearchRequest
+from src.models.models import SearchAuthorsResult, VectorListSearchRequest
 from src.services.standalone import search_academic_db_authors
 
 router = APIRouter()
@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.post(
     "/search_academic_db_authors",
-    response_model=SearchResponse,
+    response_model=SearchAuthorsResult,
     response_description="List of documents matching the query",
 )
 async def search_vectors(request: VectorListSearchRequest):
@@ -20,7 +20,7 @@ async def search_vectors(request: VectorListSearchRequest):
     - **top_k**: The number of documents to return (default 16)
     """
     try:
-        result = await search_academic_db_authors.search(request.query_list, request.top_k)
-        return SearchResponse(result=result)
+        authors = await search_academic_db_authors.search(request.query_list, request.top_k)
+        return SearchAuthorsResult(authors=authors)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

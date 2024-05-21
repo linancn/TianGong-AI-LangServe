@@ -32,24 +32,26 @@ async def search(
     response = openai_client.embeddings.create(
         input=query_list, model=OPENAI_EMBEDDING_MODEL_V3
     )
-    query_vector = response.data[0].embedding
-
-    docs = idx.query(
-        namespace=PINECONE_NAMESPACE_SCI,
-        vector=query_vector,
-        top_k=top_k,
-        include_metadata=True,
-    )
+    query_vector_list = [item.embedding for item in response.data]
 
     doi_set = set()
-    for matche in docs["matches"]:
-        doi = matche["id"].rpartition("_")[0]
-        doi_set.add(doi)
+
+    for query_vector in query_vector_list:
+        docs = idx.query(
+            namespace=PINECONE_NAMESPACE_SCI,
+            vector=query_vector,
+            top_k=top_k,
+            include_metadata=True,
+        )
+
+        for matche in docs["matches"]:
+            doi = matche["id"].rpartition("_")[0]
+            doi_set.add(doi)
 
     xata_response = xata.data().query(
         "journals",
         {
-            "columns": ["doi", "title", "authors"],
+            "columns": ["doi", "authors"],
             "filter": {
                 "doi": {"$any": list(doi_set)},
             },
@@ -57,26 +59,12 @@ async def search(
     )
 
     records = xata_response.get("records", [])
-    records_dict = {record["doi"]: record for record in records}
 
-    docs_list = []
-    for doc in docs["matches"]:
-        doi = doc["id"].rpartition("_")[0]
-        record = records_dict.get(doi, {})
+    authors_set = set()
+    for record in records:
+        authors_set.update(record["authors"])
 
-        if record:
-            date = datetime.datetime.fromtimestamp(doc.metadata["date"])
-            formatted_date = date.strftime("%Y-%m")
-            authors = ", ".join(record["authors"])
-            url = "https://doi.org/{}".format(doi)
+    authors_list = list(authors_set)
+    authors_list.sort()
 
-            source_entry = "[{}. {}. {}. {}.]({})".format(
-                record["title"],
-                doc.metadata["journal"],
-                authors,
-                formatted_date,
-                url,
-            )
-            docs_list.append({"content": doc.metadata["text"], "source": source_entry})
-
-    return docs_list
+    return authors_list
