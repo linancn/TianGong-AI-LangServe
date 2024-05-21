@@ -17,7 +17,7 @@ from src.config.config import (
 
 
 async def search(
-    query: list[str],
+    query_list: list[str],
     top_k: Optional[int] = 16,
 ) -> list:
     """Semantic search authors in academic vector database."""
@@ -30,7 +30,7 @@ async def search(
     xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
 
     response = openai_client.embeddings.create(
-        input=query, model=OPENAI_EMBEDDING_MODEL_V3
+        input=query_list, model=OPENAI_EMBEDDING_MODEL_V3
     )
     query_vector = response.data[0].embedding
 
