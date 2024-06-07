@@ -25,6 +25,7 @@ from src.services.lc.tools.search_local_db_tool import SearchLocalDb
 from src.services.lc.tools.search_patent_db_tool import SearchPatentDb
 from src.services.lc.tools.search_report_tool import SearchReport
 from src.services.lc.tools.search_standard_tool import SearchStandardDb
+from src.services.lc.tools.search_ali_tool import SearchALI
 
 
 def init_chat_history(session_id: str) -> BaseChatMessageHistory:
@@ -46,6 +47,7 @@ def openai_agent_runnable():
         SearchPatentDb(),
         SearchReport(),
         SearchStandardDb(),
+        SearchALI(),
     ]
     oai_tools = [convert_to_openai_function(tool) for tool in lc_tools]
 
