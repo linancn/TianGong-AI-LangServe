@@ -6,7 +6,7 @@ authors = ["nanli <linanenv@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-duckduckgo-search = "^5.2.2"
+duckduckgo-search = "^6.1.5"
 e2b = "^0.14.12"
 fastapi = "^0.110.1"
 httpx-sse = "^0.4.0"
