@@ -25,13 +25,13 @@ from src.models.models import VectorSearchRequestWithIds
 
 class SearchESG(BaseTool):
     name = "search_ESG_tool"
-    description = "Search for the ESG information."
+    description = "Full text search and semantic search in ESG reports. Query MUST be in Simplified Chinese."
     args_schema: Type[BaseModel] = VectorSearchRequestWithIds
 
     def _run(
         self,
         query: str,
-        top_k: Optional[int] = 16,
+        top_k: Optional[int] = 8,
         doc_ids: Optional[list[str]] = None,
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
@@ -60,27 +60,67 @@ class SearchESG(BaseTool):
             include_metadata=True,
         )
 
-        id_set = set()
-        for doc in docs["matches"]:
-            id = doc["metadata"]["rec_id"]
-            id_set.add(id)
+        xata_fulltext_response = xata.data().search_table(
+            "ESG_Fulltext",
+            {
+                "query": query,
+                "target": ["text"],
+                "page": {"size": top_k},
+                "filter": {"reportId": {"$any": doc_ids}},
+            },
+        )
 
-        xata_response = xata.data().query(
+        records = xata_fulltext_response.get("records", [])
+
+        text_set = set()
+        unique_docs = []
+
+        # Process docs
+        for doc in docs["matches"]:
+            text = doc["metadata"]["text"]
+            if text not in text_set:
+                text_set.add(text)
+                unique_docs.append(
+                    {
+                        "id": doc["metadata"]["rec_id"],
+                        "page_number": doc["metadata"]["page_number"],
+                        "text": text,
+                    }
+                )
+
+        # Process records
+        for record in records:
+            text = record["text"]
+            if text not in text_set:
+                text_set.add(text)
+                unique_docs.append(
+                    {
+                        "id": record["reportId"],
+                        "page_number": record["pageNumber"],
+                        "text": text,
+                    }
+                )
+
+        id_set = set()
+        for doc in unique_docs:
+            id_set.add(doc["id"])
+
+        xata_meta_response = xata.data().query(
             "ESG",
             {
-                "columns": ["company_short_name", "report_title", "publication_date"],
+                "columns": ["company_name", "report_title", "publication_date"],
                 "filter": {
                     "id": {"$any": list(id_set)},
                 },
             },
         )
 
-        records = xata_response.get("records", [])
-        records_dict = {record["id"]: record for record in records}
+        meta_records = xata_meta_response.get("records", [])
+        records_dict = {record["id"]: record for record in meta_records}
 
         docs_list = []
-        for doc in docs["matches"]:
-            id = doc.metadata["rec_id"]
+        for doc in unique_docs:
+            id = doc["id"]
             record = records_dict.get(id, {})
 
             if record:
@@ -88,25 +128,23 @@ class SearchESG(BaseTool):
                     record.get("publication_date"), "%Y-%m-%dT%H:%M:%SZ"
                 )
                 formatted_date = date.strftime("%Y-%m-%d")
-                company_short_name = record.get("company_short_name", "")
+                company_name = record.get("company_name", "")
                 report_title = record.get("report_title", "")
 
                 source_entry = "{}. {}. {}. (P{})".format(
-                    company_short_name,
+                    company_name,
                     report_title,
                     formatted_date,
-                    int(doc.metadata["page_number"]),
+                    int(doc["page_number"]),
                 )
-                docs_list.append(
-                    {"content": doc.metadata["text"], "source": source_entry}
-                )
+                docs_list.append({"content": doc["text"], "source": source_entry})
 
         return str(docs_list)
 
     async def _arun(
         self,
         query: str,
-        top_k: Optional[int] = 16,
+        top_k: Optional[int] = 8,
         doc_ids: Optional[list[str]] = None,
         run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
     ) -> str:
@@ -135,27 +173,67 @@ class SearchESG(BaseTool):
             include_metadata=True,
         )
 
-        id_set = set()
-        for doc in docs["matches"]:
-            id = doc["metadata"]["rec_id"]
-            id_set.add(id)
+        xata_fulltext_response = xata.data().search_table(
+            "ESG_Fulltext",
+            {
+                "query": query,
+                "target": ["text"],
+                "page": {"size": top_k},
+                "filter": {"reportId": {"$any": doc_ids}},
+            },
+        )
 
-        xata_response = xata.data().query(
+        records = xata_fulltext_response.get("records", [])
+
+        text_set = set()
+        unique_docs = []
+
+        # Process docs
+        for doc in docs["matches"]:
+            text = doc["metadata"]["text"]
+            if text not in text_set:
+                text_set.add(text)
+                unique_docs.append(
+                    {
+                        "id": doc["metadata"]["rec_id"],
+                        "page_number": doc["metadata"]["page_number"],
+                        "text": text,
+                    }
+                )
+
+        # Process records
+        for record in records:
+            text = record["text"]
+            if text not in text_set:
+                text_set.add(text)
+                unique_docs.append(
+                    {
+                        "id": record["reportId"],
+                        "page_number": record["pageNumber"],
+                        "text": text,
+                    }
+                )
+
+        id_set = set()
+        for doc in unique_docs:
+            id_set.add(doc["id"])
+
+        xata_meta_response = xata.data().query(
             "ESG",
             {
-                "columns": ["company_short_name", "report_title", "publication_date"],
+                "columns": ["company_name", "report_title", "publication_date"],
                 "filter": {
                     "id": {"$any": list(id_set)},
                 },
             },
         )
 
-        records = xata_response.get("records", [])
-        records_dict = {record["id"]: record for record in records}
+        meta_records = xata_meta_response.get("records", [])
+        records_dict = {record["id"]: record for record in meta_records}
 
         docs_list = []
-        for doc in docs["matches"]:
-            id = doc.metadata["rec_id"]
+        for doc in unique_docs:
+            id = doc["id"]
             record = records_dict.get(id, {})
 
             if record:
@@ -163,17 +241,15 @@ class SearchESG(BaseTool):
                     record.get("publication_date"), "%Y-%m-%dT%H:%M:%SZ"
                 )
                 formatted_date = date.strftime("%Y-%m-%d")
-                company_short_name = record.get("company_short_name", "")
+                company_name = record.get("company_name", "")
                 report_title = record.get("report_title", "")
 
                 source_entry = "{}. {}. {}. (P{})".format(
-                    company_short_name,
+                    company_name,
                     report_title,
                     formatted_date,
-                    int(doc.metadata["page_number"]),
+                    int(doc["page_number"]),
                 )
-                docs_list.append(
-                    {"content": doc.metadata["text"], "source": source_entry}
-                )
+                docs_list.append({"content": doc["text"], "source": source_entry})
 
         return str(docs_list)
