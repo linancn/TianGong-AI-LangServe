@@ -3,7 +3,8 @@ from typing import Optional
 
 from openai import OpenAI
 from pinecone import Pinecone
-from xata.client import XataClient
+from supabase import Client, create_client
+# from xata.client import XataClient
 
 from src.config.config import (
     OPENAI_API_KEY,
@@ -11,8 +12,10 @@ from src.config.config import (
     PINECONE_API_KEY,
     PINECONE_INDEX_NAME,
     PINECONE_NAMESPACE_SCI,
-    XATA_API_KEY,
-    XATA_DOCS_DB_URL,
+    SUPABASE_KB_KEY,
+    SUPABASE_KB_URL,
+    # XATA_API_KEY,
+    # XATA_DOCS_DB_URL,
 )
 
 
@@ -27,7 +30,9 @@ async def search(
     pc = Pinecone(api_key=PINECONE_API_KEY)
     idx = pc.Index(PINECONE_INDEX_NAME)
 
-    xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
+    supabase: Client = create_client(SUPABASE_KB_URL, SUPABASE_KB_KEY)
+
+    # xata = XataClient(api_key=XATA_API_KEY, db_url=XATA_DOCS_DB_URL)
 
     response = openai_client.embeddings.create(
         input=query, model=OPENAI_EMBEDDING_MODEL_V3
@@ -46,17 +51,22 @@ async def search(
         doi = matche["id"].rpartition("_")[0]
         doi_set.add(doi)
 
-    xata_response = xata.data().query(
-        "journals",
-        {
-            "columns": ["doi", "title", "authors"],
-            "filter": {
-                "doi": {"$any": list(doi_set)},
-            },
-        },
+    supabase_response = (
+        supabase.table("journals").select("doi,title,authors").in_("doi", list(doi_set)).execute()
     )
+    records = supabase_response.data
 
-    records = xata_response.get("records", [])
+    # xata_response = xata.data().query(
+    #     "journals",
+    #     {
+    #         "columns": ["doi", "title", "authors"],
+    #         "filter": {
+    #             "doi": {"$any": list(doi_set)},
+    #         },
+    #     },
+    # )
+
+    # records = xata_response.get("records", [])
     records_dict = {record["doi"]: record for record in records}
 
     docs_list = []

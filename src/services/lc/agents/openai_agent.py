@@ -3,8 +3,8 @@ from langchain.agents.format_scratchpad.openai_tools import (
     format_to_openai_tool_messages,
 )
 from langchain.agents.output_parsers.openai_tools import OpenAIToolsAgentOutputParser
-from langchain.memory import XataChatMessageHistory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_message_histories import XataChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.utils.function_calling import convert_to_openai_function
@@ -19,13 +19,13 @@ from src.config.config import (
     XATA_MEMORY_TABLE_NAME,
 )
 from src.services.lc.tools.search_academic_db_tool import SearchAcademicDb
+from src.services.lc.tools.search_ali_tool import SearchALI
 from src.services.lc.tools.search_esg_tool import SearchESG
 from src.services.lc.tools.search_internet_tool import SearchInternet
 from src.services.lc.tools.search_local_db_tool import SearchLocalDb
 from src.services.lc.tools.search_patent_db_tool import SearchPatentDb
 from src.services.lc.tools.search_report_tool import SearchReport
 from src.services.lc.tools.search_standard_tool import SearchStandardDb
-from src.services.lc.tools.search_ali_tool import SearchALI
 
 
 def init_chat_history(session_id: str) -> BaseChatMessageHistory:

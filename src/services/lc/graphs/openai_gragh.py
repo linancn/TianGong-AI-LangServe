@@ -2,8 +2,8 @@ import json
 import operator
 from typing import Annotated, Sequence, TypedDict
 
-from langchain.tools.render import format_tool_to_openai_function
 from langchain_core.messages import BaseMessage, FunctionMessage
+from langchain_core.utils.function_calling import convert_to_openai_function
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import ToolExecutor, ToolInvocation
@@ -19,7 +19,7 @@ class AgentState(TypedDict):
 def openai_graph_runnable():
     tools = [SearchInternet()]
     tool_executor = ToolExecutor(tools)
-    functions = [format_tool_to_openai_function(t) for t in tools]
+    functions = [convert_to_openai_function(t) for t in tools]
 
     model = ChatOpenAI(
         api_key=OPENAI_API_KEY,

@@ -1,8 +1,8 @@
 import textwrap
 
 from langchain.agents import AgentExecutor, create_react_agent
-from langchain.memory import XataChatMessageHistory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_message_histories import XataChatMessageHistory
 from langchain_community.chat_models import ChatZhipuAI
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
