@@ -11,8 +11,6 @@ COPY docker/redis.conf /etc/redis/redis.conf
 
 WORKDIR /app
 
-COPY README.md README.md
-
 # Copy the pyproject.toml and poetry.lock file into the container
 COPY pyproject.toml poetry.lock ./
 
@@ -26,5 +24,7 @@ COPY src/ src/
 COPY static/ static/
 
 COPY templates/ templates/
+
+COPY .secrets/secrets.toml .secrets/secrets.toml
 
 CMD ["/usr/bin/supervisord"]
