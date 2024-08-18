@@ -7,20 +7,20 @@
   },
   "servers": [
     {
-      "url": "https://gpt.kaiwu.tech"
+      "url": "https://gpt.kaiwu.info"
     }
   ],
   "paths": {
-    "/vector_search/": {
+    "/search_academic_db": {
       "post": {
         "summary": "Vector Search",
         "description": "This endpoint allows you to perform a semantic search in an academic or professional vector database.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of documents to return (default 16)",
-        "operationId": "vector_search_vector_search__post",
+        "operationId": "search_vectors_search_academic_db_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DocumentQueryModel"
+                "$ref": "#/components/schemas/VectorSearchRequest"
               }
             }
           },
@@ -33,10 +33,8 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/src__main__Document"
-                  },
-                  "type": "array",
-                  "title": "Response Vector Search Vector Search  Post"
+                    "$ref": "#/components/schemas/SearchResponse"
+                  }
                 }
               }
             }
@@ -62,14 +60,21 @@
   },
   "components": {
     "schemas": {
-      "DocumentQueryModel": {
+      "VectorSearchRequest": {
         "properties": {
           "query": {
             "type": "string",
             "title": "Query"
           },
           "top_k": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Top K",
             "default": 16
           }
@@ -78,9 +83,25 @@
         "required": [
           "query"
         ],
-        "title": "DocumentQueryModel"
+        "title": "VectorSearchRequest"
       },
-      "src__main__Document": {
+      "SearchResponse": {
+        "properties": {
+          "result": {
+            "items": {
+              "$ref": "#/components/schemas/SearchResultWithSource"
+            },
+            "type": "array",
+            "title": "Result"
+          }
+        },
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "title": "SearchResponse"
+      },
+      "SearchResultWithSource": {
         "properties": {
           "content": {
             "type": "string",
@@ -96,7 +117,7 @@
           "content",
           "source"
         ],
-        "title": "Document"
+        "title": "SearchResultWithSource"
       },
       "HTTPValidationError": {
         "properties": {
