@@ -12,8 +12,9 @@ from src.config.config import (
 )
 from src.models.models import AgentInput, AgentOutput, GraphInput
 from src.routers import (
-    search_academic_db_router,
+    health_router,
     search_academic_db_authors_router,
+    search_academic_db_router,
     search_education_db_router,
     search_esg_db_router,
     search_patent_db_router,
@@ -57,6 +58,7 @@ app.add_middleware(
 
 app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
+app.include_router(health_router.router)
 app.include_router(search_academic_db_router.router)
 app.include_router(search_academic_db_authors_router.router)
 app.include_router(search_education_db_router.router)
@@ -64,7 +66,6 @@ app.include_router(search_esg_db_router.router)
 app.include_router(search_patent_db_router.router)
 app.include_router(search_standard_db_router.router)
 app.include_router(upload_file_router.router)
-
 
 add_routes(
     app,
@@ -103,8 +104,6 @@ add_routes(
     input_type=GraphInput,
 )
 
-
-add_routes
 
 oauth_app = FastAPI()
 
