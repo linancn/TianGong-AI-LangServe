@@ -23,14 +23,12 @@ r = redis.Redis(host="localhost", port=6379, db=0)
 def get_oauth_params(
     response_type: str = Query(...),
     client_id: str = Query(...),
-    scope: str = Query(...),
     state: str = Query(...),
     redirect_uri: str = Query(...),
 ) -> dict:
     return {
         "response_type": response_type,
         "client_id": client_id,
-        "scope": scope,
         "state": state,
         "redirect_uri": redirect_uri,
     }
