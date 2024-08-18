@@ -58,7 +58,6 @@ app.add_middleware(
 
 app.mount("/.well-known", StaticFiles(directory="static"), name="static")
 
-app.include_router(health_router.router)
 app.include_router(search_academic_db_router.router)
 app.include_router(search_academic_db_authors_router.router)
 app.include_router(search_education_db_router.router)
@@ -110,6 +109,7 @@ oauth_app = FastAPI()
 oauth_app.add_middleware(SessionMiddleware, secret_key=FASTAPI_MIDDLEWARE_SECRECT_KEY)
 
 oauth_app.include_router(wix_oauth_router.router)
+oauth_app.include_router(health_router.router)
 
 
 app.mount("/oauth", oauth_app)
