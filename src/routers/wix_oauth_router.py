@@ -107,6 +107,9 @@ async def subscription(
 
     r.set(openai_code, expires_in)
 
+    if subscription == "Basic":
+        return JSONResponse(content={"message": "You are an Basic member.", "url": url})
+
     if subscription == "Pro":
         return JSONResponse(content={"message": "You are an Pro member.", "url": url})
 
