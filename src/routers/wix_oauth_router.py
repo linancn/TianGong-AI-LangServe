@@ -105,7 +105,7 @@ async def subscription(
 
     subscription, expires_in = await wix_get_subscription(member_access_token)
 
-    r.set(openai_code, expires_in)
+    r.set(openai_code, expires_in, ex=1800)
 
     if subscription == "Basic":
         return JSONResponse(content={"message": "You are an Basic member.", "url": url})
