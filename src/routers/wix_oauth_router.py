@@ -50,6 +50,7 @@ async def login(
 
 @router.post("/login/")
 async def login_post(
+    request: Request,
     username: str = Form(...),
     password: str = Form(...),
     session_data: dict = Depends(get_session_data),
@@ -60,17 +61,22 @@ async def login_post(
     state = session_data.get("state")
     # redirect_uri = session_data.get("redirect_uri")
 
-    wix_callback_url, code_verifier = await wix_get_callback_url(
+    result = await wix_get_callback_url(
         username=username, password=password, state=state
     )
 
+    if result is None:
+        return templates.TemplateResponse(
+            "login.html", {"request": request, "error": "User not registered!"}
+        )
+
+    wix_callback_url, code_verifier = result
     session_data["wix_callback_url"] = wix_callback_url
     session_data["code_verifier"] = code_verifier
 
     # redirect to callback url
-    url = "../callback/"
     raise HTTPException(
-        status_code=status.HTTP_303_SEE_OTHER, headers={"Location": url}
+        status_code=status.HTTP_303_SEE_OTHER, headers={"Location": "../callback/"}
     )
 
 
