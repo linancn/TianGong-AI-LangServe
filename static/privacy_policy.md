@@ -35,4 +35,4 @@ We have the discretion to update this Privacy Policy at any time. When we do, we
 
 If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this Action, please contact us at:
 
-- [service@kaiwu.tech](mailto:service@kaiwu.info)
+- [service@kaiwu.info](mailto:service@kaiwu.info)
