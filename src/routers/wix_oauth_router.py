@@ -91,35 +91,36 @@ async def callback(request: Request, session_data: dict = Depends(get_session_da
 async def subscription(
     request: SubscriptionRequest, session_data: dict = Depends(get_session_data)
 ):
-    state = session_data.get("state")
-    redirect_uri = session_data.get("redirect_uri")
-    # state from wix
-    openai_code = str(uuid.uuid4())
-    url = redirect_uri + f"?state={state}&code={openai_code}"
+    try:
+        state = session_data.get("state")
+        redirect_uri = session_data.get("redirect_uri")
+        # state from wix
+        openai_code = str(uuid.uuid4())
+        url = redirect_uri + f"?state={state}&code={openai_code}"
 
-    wix_code = request.code
+        wix_code = request.code
 
-    member_access_token = await get_member_access_token(
-        wix_code, session_data["code_verifier"]
-    )
-
-    subscription, expires_in = await wix_get_subscription(member_access_token)
-
-    r.set(openai_code, expires_in, ex=1800)
-
-    if subscription == "Basic":
-        return JSONResponse(content={"message": "You are an Basic member.", "url": url})
-
-    if subscription == "Pro":
-        return JSONResponse(content={"message": "You are an Pro member.", "url": url})
-
-    else:
-        return JSONResponse(
-            content={
-                "message": "You are not an Pro member.",
-                "url": "https://www.kaiwu.info",
-            }
+        member_access_token = await get_member_access_token(
+            wix_code, session_data["code_verifier"]
         )
+
+        subscription, expires_in = await wix_get_subscription(member_access_token)
+
+        r.set(openai_code, expires_in, ex=1800)
+
+        if subscription == "Basic":
+            message = "You are a Basic subscriber."
+        elif subscription == "Pro":
+            message = "You are a Pro subscriber."
+        elif subscription == "Elite":
+            message = "You are an Elite subscriber."
+        else:
+            message = "It seems you are not subscribed yet. Please visit our website for more information."
+            url = "https://www.kaiwu.info"
+
+        return JSONResponse(content={"message": message, "url": url})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/authorization/")
