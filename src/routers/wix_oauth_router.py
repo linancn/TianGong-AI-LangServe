@@ -104,16 +104,19 @@ async def subscription(
             wix_code, session_data["code_verifier"]
         )
 
-        subscription, expires_in = await wix_get_subscription(member_access_token)
+        result = await wix_get_subscription(member_access_token)
 
-        r.set(openai_code, expires_in, ex=1800)
+        if result is not None:
+            subscription, expires_in = result
 
-        if subscription == "Basic":
-            message = "You are a Basic subscriber."
-        elif subscription == "Pro":
-            message = "You are a Pro subscriber."
-        elif subscription == "Elite":
-            message = "You are an Elite subscriber."
+            r.set(openai_code, expires_in, ex=1800)
+
+            if subscription == "Basic":
+                message = "You are a Basic subscriber."
+            elif subscription == "Pro":
+                message = "You are a Pro subscriber."
+            elif subscription == "Elite":
+                message = "You are an Elite subscriber."
         else:
             message = "It seems you are not subscribed yet. Please visit our website for more information."
             url = "https://www.kaiwu.info"
