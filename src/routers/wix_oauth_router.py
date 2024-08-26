@@ -70,7 +70,7 @@ async def login_post(
             "login.html",
             {
                 "request": request,
-                "error": "Login failed: Invalid password or unregistered user.",
+                "error": "Invalid password or unregistered user.",
             },
         )
 
