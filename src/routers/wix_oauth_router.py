@@ -67,7 +67,11 @@ async def login_post(
 
     if result is None:
         return templates.TemplateResponse(
-            "login.html", {"request": request, "error": "User not registered!"}
+            "login.html",
+            {
+                "request": request,
+                "error": "Login failed: Invalid password or unregistered user.",
+            },
         )
 
     wix_callback_url, code_verifier = result
