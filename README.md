@@ -75,6 +75,12 @@ aws ecr get-login-password --region us-east-1  | docker login --username AWS --p
 docker push 339712838008.dkr.ecr.us-east-1.amazonaws.com/kaiwu-gpts:0.0.1
 ```
 
+### Local Run
+
+```bash
+docker run -p 80:80 339712838008.dkr.ecr.us-east-1.amazonaws.com/kaiwu-gpts:0.0.1
+```
+
 ### secrets.toml
 
 Copy secrets_dev.toml to secrets.toml and fill in the real secrets.
