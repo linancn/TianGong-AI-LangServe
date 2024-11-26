@@ -11,16 +11,16 @@
     }
   ],
   "paths": {
-    "/search_academic_db": {
+    "/search_sci_db": {
       "post": {
-        "summary": "Vector Search",
-        "description": "This endpoint allows you to perform a semantic search in an academic or professional vector database.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of documents to return (default 16)",
-        "operationId": "search_vectors_search_academic_db_post",
+        "summary": "Search Sci",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the academic journal paper database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "operationId": "search_sci_search_sci_db_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VectorSearchRequest"
+                "$ref": "#/components/schemas/SearchRequest"
               }
             }
           },
@@ -32,9 +32,271 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/SearchResponse"
-                  }
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/search_education_db": {
+      "post": {
+        "summary": "Search Edu",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the educational documents database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "operationId": "search_edu_search_education_db_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of documents matching the query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/search_esg_db": {
+      "post": {
+        "summary": "Search Esg",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the ESG report database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "operationId": "search_esg_search_esg_db_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of documents matching the query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/search_patent_db": {
+      "post": {
+        "summary": "Search Patent",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the patent database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)",
+        "operationId": "search_patent_search_patent_db_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of patents matching the query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/search_standard_db": {
+      "post": {
+        "summary": "Search Standard",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the standard database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "operationId": "search_standard_search_standard_db_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of documents matching the query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/search_report_db": {
+      "post": {
+        "summary": "Search Report",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the report database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "operationId": "search_report_search_report_db_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of documents matching the query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/search_textbook_db": {
+      "post": {
+        "summary": "Search Textbook",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the textbook database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "operationId": "search_textbook_search_textbook_db_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of documents matching the query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
                 }
               }
             }
@@ -60,7 +322,20 @@
   },
   "components": {
     "schemas": {
-      "VectorSearchRequest": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "SearchRequest": {
         "properties": {
           "query": {
             "type": "string",
@@ -76,14 +351,26 @@
               }
             ],
             "title": "Top K",
-            "default": 16
+            "default": 8
+          },
+          "ext_k": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ext K",
+            "default": 0
           }
         },
         "type": "object",
         "required": [
           "query"
         ],
-        "title": "VectorSearchRequest"
+        "title": "SearchRequest"
       },
       "SearchResponse": {
         "properties": {
@@ -118,19 +405,6 @@
           "source"
         ],
         "title": "SearchResultWithSource"
-      },
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
       },
       "ValidationError": {
         "properties": {
