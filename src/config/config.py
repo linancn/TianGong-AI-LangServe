@@ -1,5 +1,3 @@
-import os
-
 import toml
 
 config = toml.load(".secrets/secrets.toml")
@@ -18,5 +16,3 @@ BEARER_TOKEN = config["EDGE_FUNCTIONS"]["BEARER_TOKEN"]
 EMAIL = config["EDGE_FUNCTIONS"]["EMAIL"]
 PASSWORD = config["EDGE_FUNCTIONS"]["PASSWORD"]
 X_REGION = config["EDGE_FUNCTIONS"]["X_REGION"]
-
-

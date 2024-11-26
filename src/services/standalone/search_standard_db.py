@@ -1,10 +1,11 @@
-import aiohttp
 from typing import Optional
 
+import aiohttp
+
 from src.config.config import (
-    END_POINT,
     BEARER_TOKEN,
     EMAIL,
+    END_POINT,
     PASSWORD,
     X_REGION,
 )
@@ -17,15 +18,14 @@ async def search(
     max_top_k: int = 16,
     max_ext_k: int = 3,
 ) -> list:
-
     url = END_POINT + "standard_search"
-    
+
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {BEARER_TOKEN}",
         "email": EMAIL,
         "password": PASSWORD,
-        "x-region": X_REGION
+        "x-region": X_REGION,
     }
 
     request_body = {

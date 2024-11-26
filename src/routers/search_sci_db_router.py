@@ -21,7 +21,7 @@ async def search_sci(request: SearchRequest):
     - **ext_k**: The number of additional chunks to include before and after each topK result (default 0)
     """
     try:
-        result = await search_sci_db(
+        result = await search_sci_db.search(
             query=request.query,
             top_k=request.top_k,
             ext_k=request.ext_k,

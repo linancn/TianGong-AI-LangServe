@@ -2,10 +2,10 @@ import base64
 import hashlib
 import uuid
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import httpx
 from dateutil import parser
-from zoneinfo import ZoneInfo
 
 from src.config.config import WIX_CLIENT_ID
 

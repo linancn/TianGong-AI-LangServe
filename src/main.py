@@ -9,15 +9,14 @@ from src.config.config import (
     FASTAPI_BEARER_TOKEN,
     FASTAPI_MIDDLEWARE_SECRECT_KEY,
 )
-
 from src.routers import (
     health_router,
-    search_sci_db_router,
     search_education_db_router,
     search_esg_db_router,
     search_patent_db_router,
-    search_standard_db_router,
     search_report_db_router,
+    search_sci_db_router,
+    search_standard_db_router,
     search_textbook_db_router,
     wix_oauth_router,
 )
