@@ -130,11 +130,6 @@ async def wix_get_subscription(member_access_token: str) -> str:
         )
     orders = orders_response.json()["orders"]
 
-    result = get_highest_active_subscription(orders)
-
-    if result is None:
-        return None
-
-    subscription, expires_in = result
+    subscription, expires_in = get_highest_active_subscription(orders)
 
     return subscription, expires_in
