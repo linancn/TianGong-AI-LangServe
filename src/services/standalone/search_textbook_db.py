@@ -18,7 +18,7 @@ async def search(
     max_ext_k: int = 3,
 ) -> list:
 
-    url = END_POINT + "standard_search"
+    url = END_POINT + "textbook_search"
     
     headers = {
         "Content-Type": "application/json",

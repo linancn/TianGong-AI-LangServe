@@ -50,7 +50,6 @@ async def login(
 
 @router.post("/login/")
 async def login_post(
-    request: Request,
     username: str = Form(...),
     password: str = Form(...),
     session_data: dict = Depends(get_session_data),
@@ -61,26 +60,17 @@ async def login_post(
     state = session_data.get("state")
     # redirect_uri = session_data.get("redirect_uri")
 
-    result = await wix_get_callback_url(
+    wix_callback_url, code_verifier = await wix_get_callback_url(
         username=username, password=password, state=state
     )
 
-    if result is None:
-        return templates.TemplateResponse(
-            "login.html",
-            {
-                "request": request,
-                "error": "Invalid password or unregistered user.",
-            },
-        )
-
-    wix_callback_url, code_verifier = result
     session_data["wix_callback_url"] = wix_callback_url
     session_data["code_verifier"] = code_verifier
 
     # redirect to callback url
+    url = "../callback/"
     raise HTTPException(
-        status_code=status.HTTP_303_SEE_OTHER, headers={"Location": "../callback/"}
+        status_code=status.HTTP_303_SEE_OTHER, headers={"Location": url}
     )
 
 
@@ -101,39 +91,35 @@ async def callback(request: Request, session_data: dict = Depends(get_session_da
 async def subscription(
     request: SubscriptionRequest, session_data: dict = Depends(get_session_data)
 ):
-    try:
-        state = session_data.get("state")
-        redirect_uri = session_data.get("redirect_uri")
-        # state from wix
-        openai_code = str(uuid.uuid4())
-        url = redirect_uri + f"?state={state}&code={openai_code}"
+    state = session_data.get("state")
+    redirect_uri = session_data.get("redirect_uri")
+    # state from wix
+    openai_code = str(uuid.uuid4())
+    url = redirect_uri + f"?state={state}&code={openai_code}"
 
-        wix_code = request.code
+    wix_code = request.code
 
-        member_access_token = await get_member_access_token(
-            wix_code, session_data["code_verifier"]
+    member_access_token = await get_member_access_token(
+        wix_code, session_data["code_verifier"]
+    )
+
+    subscription, expires_in = await wix_get_subscription(member_access_token)
+
+    r.set(openai_code, expires_in, ex=1800)
+
+    if subscription == "Basic":
+        return JSONResponse(content={"message": "You are an Basic member.", "url": url})
+
+    if subscription == "Pro":
+        return JSONResponse(content={"message": "You are an Pro member.", "url": url})
+
+    else:
+        return JSONResponse(
+            content={
+                "message": "You are not an Pro member.",
+                "url": "https://www.kaiwu.info",
+            }
         )
-
-        result = await wix_get_subscription(member_access_token)
-
-        if result is not None:
-            subscription, expires_in = result
-
-            r.set(openai_code, expires_in, ex=1800)
-
-            if subscription == "Basic":
-                message = "You are a Basic subscriber."
-            elif subscription == "Pro":
-                message = "You are a Pro subscriber."
-            elif subscription == "Elite":
-                message = "You are an Elite subscriber."
-        else:
-            message = "It seems you are not subscribed yet. Please visit our website for more information."
-            url = "https://www.kaiwu.info"
-
-        return JSONResponse(content={"message": message, "url": url})
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/authorization/")

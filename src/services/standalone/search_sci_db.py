@@ -18,7 +18,7 @@ async def search(
     max_ext_k: int = 3,
 ) -> list:
 
-    url = END_POINT + "standard_search"
+    url = END_POINT + "sci_search"
     
     headers = {
         "Content-Type": "application/json",
@@ -32,6 +32,7 @@ async def search(
         "query": query,
         "topK": min(top_k, max_top_k),
         "extK": min(ext_k, max_ext_k),
+        "getMeta": True,
     }
 
     # try:

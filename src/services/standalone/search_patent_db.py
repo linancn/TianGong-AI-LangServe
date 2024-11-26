@@ -1,57 +1,40 @@
-import datetime
+import aiohttp
 from typing import Optional
 
-from openai import OpenAI
-from pinecone import Pinecone
-
 from src.config.config import (
-    OPENAI_API_KEY,
-    OPENAI_EMBEDDING_MODEL_V3,
-    PINECONE_API_KEY,
-    PINECONE_INDEX_NAME,
-    PINECONE_NAMESPACE_PATENT,
+    END_POINT,
+    BEARER_TOKEN,
+    EMAIL,
+    PASSWORD,
+    X_REGION,
 )
 
 
 async def search(
     query: str,
-    top_k: Optional[int] = 16,
+    top_k: Optional[int] = 8,
+    ext_k: Optional[int] = 0,
+    max_top_k: int = 16,
 ) -> list:
-    """Semantic search in patents vector database."""
 
-    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+    url = END_POINT + "patent_search"
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {BEARER_TOKEN}",
+        "email": EMAIL,
+        "password": PASSWORD,
+        "x-region": X_REGION
+    }
 
-    pc = Pinecone(api_key=PINECONE_API_KEY)
-    idx = pc.Index(PINECONE_INDEX_NAME)
+    request_body = {
+        "query": query,
+        "topK": min(top_k, max_top_k),
+    }
 
-    response = openai_client.embeddings.create(
-        input=query, model=OPENAI_EMBEDDING_MODEL_V3
-    )
-    query_vector = response.data[0].embedding
-
-    docs = idx.query(
-        namespace=PINECONE_NAMESPACE_PATENT,
-        vector=query_vector,
-        top_k=top_k,
-        include_metadata=True,
-    )
-
-    docs_list = []
-    for doc in docs["matches"]:
-        date = datetime.datetime.fromtimestamp(doc.metadata["publication_date"])
-        formatted_date = date.strftime("%Y-%m-%d")
-        country = doc.metadata["country"]
-        url = doc.metadata["url"]
-        title = doc.metadata["title"]
-        id = doc["id"]
-
-        source_entry = "[{}. {}. {}. {}.]({})".format(
-            id,
-            title,
-            country,
-            formatted_date,
-            url,
-        )
-        docs_list.append({"content": doc.metadata["abstract"], "source": source_entry})
-
-    return docs_list
+    # try:
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, headers=headers, json=request_body) as response:
+            response.raise_for_status()
+            docs_list = await response.json()
+            return docs_list
