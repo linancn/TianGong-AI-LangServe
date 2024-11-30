@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.12-bullseye
+FROM --platform=linux/amd64 python:3.12-slim-bullseye
 
 RUN apt-get update && apt-get install -y redis-server supervisor
 RUN apt-get clean
