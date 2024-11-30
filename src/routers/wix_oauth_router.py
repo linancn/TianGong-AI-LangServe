@@ -91,32 +91,44 @@ async def callback(request: Request, session_data: dict = Depends(get_session_da
 async def subscription(
     request: SubscriptionRequest, session_data: dict = Depends(get_session_data)
 ):
-    state = session_data.get("state")
-    redirect_uri = session_data.get("redirect_uri")
-    # state from wix
-    openai_code = str(uuid.uuid4())
-    url = redirect_uri + f"?state={state}&code={openai_code}"
+    try:
+        state = session_data.get("state")
+        redirect_uri = session_data.get("redirect_uri")
+        # state from wix
+        openai_code = str(uuid.uuid4())
+        url = redirect_uri + f"?state={state}&code={openai_code}"
 
-    wix_code = request.code
+        wix_code = request.code
 
-    member_access_token = await get_member_access_token(
-        wix_code, session_data["code_verifier"]
-    )
+        member_access_token = await get_member_access_token(
+            wix_code, session_data["code_verifier"]
+        )
 
-    subscription, expires_in = await wix_get_subscription(member_access_token)
+        subscription, expires_in = await wix_get_subscription(member_access_token)
 
-    r.set(openai_code, expires_in, ex=1800)
+        r.set(openai_code, expires_in, ex=1800)
 
-    if subscription == "Basic":
-        return JSONResponse(content={"message": "You are an Basic member.", "url": url})
+        if subscription == "Basic":
+            return JSONResponse(
+                content={"message": "You are a Basic member.", "url": url}
+            )
 
-    if subscription == "Pro":
-        return JSONResponse(content={"message": "You are an Pro member.", "url": url})
+        elif subscription == "Pro":
+            return JSONResponse(
+                content={"message": "You are a Pro member.", "url": url}
+            )
 
-    else:
+        else:
+            return JSONResponse(
+                content={
+                    "message": "You do not have a valid subscription.",
+                    "url": "https://www.kaiwu.info",
+                }
+            )
+    except Exception:
         return JSONResponse(
             content={
-                "message": "You are not an Pro member.",
+                "message": "You do not have a valid subscription.",
                 "url": "https://www.kaiwu.info",
             }
         )
