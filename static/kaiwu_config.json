@@ -14,7 +14,7 @@
     "/search_sci_db": {
       "post": {
         "summary": "Search Sci",
-        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the academic journal paper database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the academic journal paper database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.",
         "operationId": "search_sci_search_sci_db_post",
         "requestBody": {
           "content": {
@@ -58,7 +58,7 @@
     "/search_education_db": {
       "post": {
         "summary": "Search Edu",
-        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the educational documents database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the educational documents database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.",
         "operationId": "search_edu_search_education_db_post",
         "requestBody": {
           "content": {
@@ -102,7 +102,7 @@
     "/search_esg_db": {
       "post": {
         "summary": "Search Esg",
-        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the ESG report database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the ESG report database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.",
         "operationId": "search_esg_search_esg_db_post",
         "requestBody": {
           "content": {
@@ -146,7 +146,7 @@
     "/search_patent_db": {
       "post": {
         "summary": "Search Patent",
-        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the patent database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the patent database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.",
         "operationId": "search_patent_search_patent_db_post",
         "requestBody": {
           "content": {
@@ -190,7 +190,7 @@
     "/search_standard_db": {
       "post": {
         "summary": "Search Standard",
-        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the standard database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the standard database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.",
         "operationId": "search_standard_search_standard_db_post",
         "requestBody": {
           "content": {
@@ -234,7 +234,7 @@
     "/search_report_db": {
       "post": {
         "summary": "Search Report",
-        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the report database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the report database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.",
         "operationId": "search_report_search_report_db_post",
         "requestBody": {
           "content": {
@@ -278,7 +278,7 @@
     "/search_textbook_db": {
       "post": {
         "summary": "Search Textbook",
-        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the textbook database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.\n\n- **query**: The search query string\n- **top_k**: The number of top chunk results to return (default 8)\n- **ext_k**: The number of additional chunks to include before and after each topK result (default 0)",
+        "description": "This endpoint allows you to perform hybrid search (semantic and key word search) on the textbook database for precise and specialized information.\nIt takes a query string as input and returns a list of documents that match the query.",
         "operationId": "search_textbook_search_textbook_db_post",
         "requestBody": {
           "content": {
